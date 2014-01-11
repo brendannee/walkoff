@@ -1,4 +1,9 @@
-# Code For Health
+# Walkoff
+
+To Run
+
+    npm install
+    node index.js
 
 ## License
 

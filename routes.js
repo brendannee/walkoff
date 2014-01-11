@@ -9,6 +9,7 @@ module.exports = function routes(app){
   var automaticAPI = app.get('automaticAPI');
 
   app.get('/', function(req, res) {
+    req.session.access_token = 'eec57d208a73151e13af127d656337f78b099141';
     if(req.session && req.session.access_token) {
       res.render('app', {loggedIn: true});
     } else {
@@ -29,7 +30,7 @@ module.exports = function routes(app){
   app.get('/api/trips/', authenticate, function(req, res) {
     request.get({
       uri: 'https://api.automatic.com/v1/trips',
-      qs: { page: req.query.page },
+      qs: { page: req.query.page, per_page: req.query.per_page || 100 },
       headers: {Authorization: 'token ' + req.session.access_token}
     }, function(e, r, body) {
       try {

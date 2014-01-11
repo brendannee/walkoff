@@ -1,41 +1,41 @@
-var page = 1,
-    end = moment(),
+var end = moment(),
     fetching = false,
     cache = [],
     viewType = 'tile';
 
 fetchTrips();
 
-//infinite scroll
-$(window).scroll(function() {
-  if(page !== undefined && fetching === false && $(window).scrollTop() + $(window).height() > $(document).height() - 1000) {
-    fetching = true;
-    fetchTrips();
-  }
-});
-
 
 function fetchTrips() {
   showLoading();
-  $.getJSON('/api/trips/', {page: page})
+  $.getJSON('/api/trips/', {page: 1, per_page: 20})
     .done(function(data) {
       hideLoading();
       if(data && data.length) {
-        cache = cache.concat(data);
-        data.map(addToPage);
-        $('#trips .trip').not('.tile').map(function(idx, div) { renderTile(div); });
-        page += 1;
+        processTrips(data);
       } else {
-        page = undefined;
-        if(cache.length == 0) {
-          showAlert('No trips found', 'warning');
-        }
+        showAlert('No trips found', 'warning');
       }
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
       showAlert('Unable to fetch trips (' +jqhxr.status + ' ' + error + ')', 'danger');
     });
+}
+
+
+function processTrips(data) {
+  //Count trips under two miles
+  var trips = _.filter(data, function(trip) {
+    return (trip.distance_m / 1609.34) <= 2;
+  });
+
+  var travelTime = _.reduce(trips, function(memo, trip) {
+    return memo + (trip.end_time - trip.start_time)/(1000*60);
+  }, 0).toFixed(0);
+
+  $('#driving .tripCount').html(trips.length);
+  $('#driving .travelTime').html(travelTime);
 }
 
 

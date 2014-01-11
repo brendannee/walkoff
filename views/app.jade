@@ -1,17 +1,13 @@
 extends layout
 
 block content
-  #trips
-    .table.table-header
-      .select
-        input#selectall(type="checkbox" checked)
-      .startTime Start Time
-      .endTime End Time
-      .duration Time
-      .startLocation Start Location
-      .endLocation End Location
-      .distance Dist
-      .mpg MPG
-      .fuelCost Fuel
+  #driving.col-md-4.col-md-offset-2
+    h3 In the last 7 days
+    .row.statRow
+      .tripCount.stat
+      .tripCountLabel.statLabel Trips Under 2 Miles
+    .row.statRow
+      .travelTime.stat
+      .travelTimeLabel.statLabel Minutes Driving
   .loading
 

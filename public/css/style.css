@@ -12,6 +12,34 @@ body {
   border: 1px solid #ccc;
 }
 
+#logout {
+  float: right;
+}
+
+.statRow {
+  margin-bottom: 15px;
+}
+
+.statLabel {
+  font-size: 20px;
+  font-weight: bold;
+  width: 200px;
+  float: left;
+  padding-top: 12px;
+  margin-left: 5px;
+}
+
+.stat {
+  border: 6px solid #666;
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  width: 50px;
+  float: left;
+  text-align: center;
+  height: 50px;
+}
+
 .titlebar {
   margin-top: 0;
   margin-bottom: 5px;

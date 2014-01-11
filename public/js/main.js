@@ -1,4 +1,7 @@
-var totalMoves;
+var tripsUnderTwoMiles
+  , vehicleTravelTime
+  , vehicleDistance
+  , totalMoves;
 
 fetchTrips();
 fetchMoves();
@@ -17,23 +20,34 @@ function fetchTrips() {
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch trips (' +jqhxr.status + ' ' + error + ')', 'danger');
+      showAlert('Unable to fetch trips (' + jqhxr.status + ' ' + error + ')', 'danger');
     });
 }
 
 
 function processTrips(data) {
   //Count trips under two miles
-  var trips = _.filter(data, function(trip) {
-    return (trip.distance_m / 1609.34) <= 2;
+  tripsUnderTwoMiles = _.filter(data, function(trip) {
+    return metersToMiles(trip.distance_m) <= 2;
   });
 
-  var travelTime = _.reduce(trips, function(memo, trip) {
+  vehicleDistance =  _.reduce(tripsUnderTwoMiles, function(memo, trip) {
+    return memo + metersToMiles(trip.distance_m);
+  }, 0);
+
+  vehicleTravelTime = _.reduce(tripsUnderTwoMiles, function(memo, trip) {
     return memo + (trip.end_time - trip.start_time)/(1000*60);
   }, 0).toFixed(0);
 
-  $('#driving .tripCount').html(trips.length);
-  $('#driving .travelTime').html(travelTime);
+  $('#driving .tripCount').html(tripsUnderTwoMiles.length);
+  $('#driving .travelTime').html(vehicleTravelTime);
+
+  showTrips(tripsUnderTwoMiles);
+}
+
+
+function showTrips(trips) {
+
 }
 
 
@@ -41,17 +55,16 @@ function fetchMoves() {
   showLoading();
   $.getJSON('/api/moves/', {})
     .done(function(data) {
-      console.log(data)
       hideLoading();
       if(data && data.data && data.data.items && data.data.items.length) {
         processMoves(data.data.items);
       } else {
-        showAlert('No trips found', 'warning');
+        showAlert('No moves found', 'warning');
       }
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch moves (' +jqhxr.status + ' ' + error + ')', 'danger');
+      showAlert('Unable to fetch moves (' + jqhxr.status + ' ' + error + ')', 'danger');
     });
 }
 
@@ -68,7 +81,7 @@ function processMoves(moves) {
   }, {distance: 0, calories: 0, active_time: 0, steps: 0});
 
   $('#moves .movesSteps').html(formatNumber(totalMoves.steps));
-  $('#moves .movesDistance').html(formatDistance(totalMoves.distance));
+  $('#moves .movesDistance').html(formatNumber(metersToMiles(totalMoves.distance)));
   $('#moves .movesCalories').html(totalMoves.calories.toFixed(0));
 
   fetchGoals();
@@ -80,22 +93,26 @@ function fetchGoals() {
   $.getJSON('/api/goals/', {})
     .done(function(data) {
       hideLoading();
-      if(data && data.data && data.data) {
+      if(data && data.data) {
         processGoals(data.data);
       } else {
-        showAlert('No trips found', 'warning');
+        showAlert('No goals found', 'warning');
       }
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch moves (' +jqhxr.status + ' ' + error + ')', 'danger');
+      showAlert('Unable to fetch goals (' + jqhxr.status + ' ' + error + ')', 'danger');
     });
 }
 
 
 function processGoals(goals) {
   var weeklyGoal = goals.move_steps * 7;
+  var stepsPerMile = totalMoves.steps / metersToMiles(totalMoves.distance);
+  var missedSteps = vehicleDistance * stepsPerMile;
+  var movesPercentOfGoalNoDriving = (totalMoves.steps + missedSteps) / weeklyGoal;
   $('#moves .movesPercentOfGoal').html(formatPercent(totalMoves.steps / weeklyGoal));
+  $('#moves .movesPercentOfGoalNoDriving').html(formatPercent(movesPercentOfGoalNoDriving));
 }
 
 
@@ -140,7 +157,7 @@ function renderTile(div) {
         .addClass('tripSummaryBox')
         .append($('<div>')
           .addClass('distance')
-          .text(formatDistance(trip.distance_m)))
+          .text(formatNumber(metersToMiles(trip.distance_m))))
         .append($('<div>')
           .addClass('mpg')
           .text(formatNumber(trip.average_mpg)))
@@ -207,9 +224,8 @@ function hideAlert() {
 }
 
 
-function formatDistance(distance) {
-  //convert from m to mi
-  return (distance / 1609.34).toFixed(1);
+function metersToMiles(meters) {
+  return meters / 1609.34;
 }
 
 

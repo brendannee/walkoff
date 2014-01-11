@@ -2,7 +2,7 @@ var request = require('request'),
     async = require('async'),
     _ = require('underscore'),
     moment = require('moment');
-    keen = require('keen.io');
+    keen = require("keen.io");
 
 module.exports = function routes(app){
 
@@ -56,21 +56,6 @@ module.exports = function routes(app){
     request.get({
       uri: 'https://jawbone.com/nudge/api/users/@me/moves',
       qs: { start_time: ((Date.now()/1000) - 7*24*60*60).toFixed(0) },
-      headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
-    }, function(e, r, body) {
-      try {
-        res.json(JSON.parse(body));
-      } catch(e) {
-        console.log("error: " + e);
-        res.json(400, {"message": "Invalid access_token"});
-      }
-    });
-  });
-
-
-  app.get('/api/goals/', authenticate, function(req, res) {
-    request.get({
-      uri: 'https://jawbone.com/nudge/api/users/@me/goals',
       headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
     }, function(e, r, body) {
       try {

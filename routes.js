@@ -9,8 +9,9 @@ module.exports = function routes(app){
   var automaticAPI = app.get('automaticAPI');
   var jawboneAPI = app.get('jawboneAPI');
 
-  app.get('/', function(req, res) { 
-    //req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
+  app.get('/', function(req, res) {
+    req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
+    req.session.jawbone_access_token = 'Je5CDuGC9ORcrdAxf3gA43cL2pSXewR5GKNSPxdpEdkwDHRMyyO4-hex9ftlpMur8ooJl-U9fXdXW2MSxp0B_VECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
     if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {
       res.render('app', {loggedIn: true});
     } else {
@@ -51,11 +52,26 @@ module.exports = function routes(app){
   });
 
 
-  app.get('/api/activity/', authenticate, function(req, res) {
+  app.get('/api/moves/', authenticate, function(req, res) {
     request.get({
-      uri: 'https://api.automatic.com/v1/trips',
-      qs: { page: req.query.page, per_page: req.query.per_page || 100 },
-      headers: {Authorization: 'token ' + req.session.automatic_access_token}
+      uri: 'https://jawbone.com/nudge/api/users/@me/moves',
+      qs: { start_time: ((Date.now()/1000) - 7*24*60*60).toFixed(0) },
+      headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
+    }, function(e, r, body) {
+      try {
+        res.json(JSON.parse(body));
+      } catch(e) {
+        console.log("error: " + e);
+        res.json(400, {"message": "Invalid access_token"});
+      }
+    });
+  });
+
+
+  app.get('/api/goals/', authenticate, function(req, res) {
+    request.get({
+      uri: 'https://jawbone.com/nudge/api/users/@me/goals',
+      headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
     }, function(e, r, body) {
       try {
         res.json(JSON.parse(body));

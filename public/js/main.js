@@ -1,9 +1,10 @@
-var end = moment(),
-    fetching = false,
-    cache = [],
-    viewType = 'tile';
+var tripsUnderTwoMiles
+  , drivingDuration
+  , drivingDistance
+  , totalMoves;
 
 fetchTrips();
+fetchMoves();
 
 
 function fetchTrips() {
@@ -19,23 +20,99 @@ function fetchTrips() {
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch trips (' +jqhxr.status + ' ' + error + ')', 'danger');
+      showAlert('Unable to fetch trips (' + jqhxr.status + ' ' + error + ')', 'danger');
     });
 }
 
 
 function processTrips(data) {
   //Count trips under two miles
-  var trips = _.filter(data, function(trip) {
-    return (trip.distance_m / 1609.34) <= 2;
+  tripsUnderTwoMiles = _.filter(data, function(trip) {
+    return metersToMiles(trip.distance_m) <= 2;
   });
 
-  var travelTime = _.reduce(trips, function(memo, trip) {
+  drivingDistance =  _.reduce(tripsUnderTwoMiles, function(memo, trip) {
+    return memo + metersToMiles(trip.distance_m);
+  }, 0);
+
+  drivingDuration = _.reduce(tripsUnderTwoMiles, function(memo, trip) {
     return memo + (trip.end_time - trip.start_time)/(1000*60);
   }, 0).toFixed(0);
 
-  $('#driving .tripCount').html(trips.length);
-  $('#driving .travelTime').html(travelTime);
+  $('[data-trips-under-two-miles]').html(tripsUnderTwoMiles.length);
+  $('[data-driving-duration').html(drivingDuration);
+
+  showTrips(tripsUnderTwoMiles);
+}
+
+
+function showTrips(trips) {
+
+}
+
+
+function fetchMoves() {
+  showLoading();
+  $.getJSON('/api/moves/', {})
+    .done(function(data) {
+      hideLoading();
+      if(data && data.data && data.data.items && data.data.items.length) {
+        processMoves(data.data.items);
+      } else {
+        showAlert('No moves found', 'warning');
+      }
+      fetching = false;
+    })
+    .fail(function(jqhxr, textStatus, error) {
+      showAlert('Unable to fetch moves (' + jqhxr.status + ' ' + error + ')', 'danger');
+    });
+}
+
+
+function processMoves(moves) {
+  //sum moves for last 7 days
+  totalMoves = _.reduce(moves, function(memo, day) {
+    return {
+        distance: memo.distance + day.details.distance
+      , calories: memo.calories + day.details.calories
+      , active_time: memo.active_time + day.details.active_time
+      , steps: memo.steps + day.details.steps
+    }
+  }, {distance: 0, calories: 0, active_time: 0, steps: 0});
+
+  $('[data-steps]').html(formatNumber(totalMoves.steps));
+  $('[data-walking-distance]').html(formatNumber(metersToMiles(totalMoves.distance)));
+  $('[data-calories]').html(totalMoves.calories.toFixed(0));
+
+  fetchGoals();
+}
+
+
+function fetchGoals() {
+  showLoading();
+  $.getJSON('/api/goals/', {})
+    .done(function(data) {
+      hideLoading();
+      if(data && data.data) {
+        processGoals(data.data);
+      } else {
+        showAlert('No goals found', 'warning');
+      }
+      fetching = false;
+    })
+    .fail(function(jqhxr, textStatus, error) {
+      showAlert('Unable to fetch goals (' + jqhxr.status + ' ' + error + ')', 'danger');
+    });
+}
+
+
+function processGoals(goals) {
+  var weeklyGoal = goals.move_steps * 7;
+  var stepsPerMile = totalMoves.steps / metersToMiles(totalMoves.distance);
+  var missedSteps = drivingDistance * stepsPerMile;
+  var movesPercentOfGoalNoDriving = (totalMoves.steps + missedSteps) / weeklyGoal;
+  $('[data-percent-of-goal]').html(formatPercent(totalMoves.steps / weeklyGoal));
+  $('[data-percent-of-goal-no-driving]').html(formatPercent(movesPercentOfGoalNoDriving));
 }
 
 
@@ -80,10 +157,10 @@ function renderTile(div) {
         .addClass('tripSummaryBox')
         .append($('<div>')
           .addClass('distance')
-          .text(formatDistance(trip.distance_m)))
+          .text(formatNumber(metersToMiles(trip.distance_m))))
         .append($('<div>')
           .addClass('mpg')
-          .text(formatMPG(trip.average_mpg)))
+          .text(formatNumber(trip.average_mpg)))
         .append($('<div>')
           .addClass('fuelCost')
           .text(formatFuelCost(trip.fuel_cost_usd)))
@@ -147,9 +224,8 @@ function hideAlert() {
 }
 
 
-function formatDistance(distance) {
-  //convert from m to mi
-  return (distance / 1609.34).toFixed(1);
+function metersToMiles(meters) {
+  return meters / 1609.34;
 }
 
 
@@ -163,8 +239,16 @@ function formatLocation(location) {
 }
 
 
-function formatMPG(average_mpg) {
-  return average_mpg.toFixed(1);
+function formatNumber(number) {
+  if(number>100) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  } else {
+    return number.toFixed(1);
+  }
+}
+
+function formatPercent(fraction) {
+  return (fraction * 100).toFixed(0) + '%';
 }
 
 

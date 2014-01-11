@@ -1,16 +1,17 @@
 extends layout
 
 block content
-  .panel.panel-default.sign-in
-    .panel-body.row
-      .col-md-4.description Compare your Driving and Physical Activity
-      .col-md-6
-        if automatic_access_token
-          p Logged into Automatic
-        else
-          a.center-block.btn.btn-primary.btn-lg(href="/authorize-automatic/") <span class="icon automatic-logo"></span>Sign in with Automatic
-        if jawbone_access_token
-          p Logged into Jawbone
-        else
-          a.center-block.btn.btn-primary.btn-lg(href="/authorize-jawbone/") <span class="icon "></span>Sign in with Jawbone
+
+  section.auth-panel.jawbone
+    if jawbone_access_token
+      p Logged into Jawbone
+    else
+      a.auth-button.jawbone(href="/authorize-jawbone/") Sign in with Jawbone
+
+  section.auth-panel.automatic
+    if automatic_access_token
+      p Logged into Automatic
+    else
+      a.auth-button.automatic(href="/authorize-automatic/") Sign in with Automatic
+
 

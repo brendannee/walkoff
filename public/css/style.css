@@ -1,0 +1,48 @@
+header[role="banner"]{
+  background: rgb(41,41,53);
+  color: rgb(161,161,161);
+  display: table;
+  width: 100vw;
+  text-align: center;
+  height: 8vh;
+}
+.titlebar{
+  display: table-cell;
+  vertical-align: middle;
+  font-weight: normal;
+  letter-spacing: .175em;
+  font-size: 4vh;
+}
+main{
+  position: relative;
+}
+
+.auth-panel{
+  width: 100vw;
+  height: 46vh;
+  text-align: center;
+  position: relative;
+}
+.auth-panel:before{
+  content: "";
+  height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+.auth-panel.jawbone{
+  background: rgb(57,204,204);
+  border-bottom: 3px solid rgba(0,0,0,.2);
+}
+.auth-panel.automatic{
+  background: rgb(124,132,138);
+}
+.auth-button{
+  color: rgba(0,0,0,.4);
+  display: inline-block;
+  vertical-align: middle;
+  background: rgba(0,0,0,.1);
+  box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,.1), 0px 1px 0px 0px rgba(0,0,0,.1);
+  border-radius: .5em;
+  text-decoration: none;
+  padding: 1em;
+}

@@ -6,7 +6,6 @@ var request = require('request'),
 module.exports = function routes(app){
 
   var automaticAPI = app.get('automaticAPI');
-
   var jawboneAPI = app.get('jawboneAPI');
 
   app.get('/', function(req, res) {
@@ -18,9 +17,11 @@ module.exports = function routes(app){
     }
   });
 
+
   app.get('/authorize-automatic/', function(req, res) {
       res.redirect(automaticAPI.automaticAuthorizeUrl + '?client_id=' + automaticAPI.automaticClientId + '&response_type=code&scope=' + automaticAPI.automaticScopes)
   });
+
 
   app.get('/authorize-jawbone/', function(req, res) {
       res.redirect(jawboneAPI.jawboneAuthorizeUrl + '?client_id=' + jawboneAPI.jawboneClientId + '&redirect_uri=' + encodeURIComponent('https://walkoff.herokuapp.com/redirect-jawbone/') + '&response_type=code&scope=basic_read move_read')
@@ -49,126 +50,20 @@ module.exports = function routes(app){
   });
 
 
-  app.get('/download/trips.json', authenticate, function(req, res) {
-    try {
-      downloadAllTrips(req, function(e, trips) {
-        if(req.query.trip_ids) {
-          var trip_ids = req.query.trip_ids.split(',');
-          var trips = filterTrips(trips, trip_ids);
-        }
-        res.json(trips);
-      });
-    } catch(e) {
-      res.json(500, undefined);
-    }
-  });
-
-
-  app.get('/download/trips.csv', authenticate, function(req, res) {
-    try {
-      downloadAllTrips(req, function(e, trips) {
-        if(req.query.trip_ids) {
-          var trip_ids = req.query.trip_ids.split(',');
-          var trips = filterTrips(trips, trip_ids);
-        }
-        var tripsAsArray = trips.map(tripToArray);
-        tripsAsArray.unshift(fieldNames());
-
-        res.csv(tripsAsArray);
-      });
-    } catch(e) {
-      res.json(500, undefined);
-    }
-  });
-
-
-  function downloadAllTrips(req, cb) {
-    var finished = false
-      , uri = 'https://api.automatic.com/v1/trips'
-      , trips = [];
-    async.until(function(){ return finished }, function(cb) {
-      request.get({
-        uri: uri,
-        headers: {Authorization: 'token ' + req.session.automatic_access_token}
-      }, function(e, r, body) {
-        trips = trips.concat(JSON.parse(body));
-        link_headers = parse_link_header(r.headers['link']);
-        if(link_headers['next']) {
-          uri = link_headers['next'];
-        } else {
-          finished = true;
-        }
-        cb();
-      });
-    }, function(e) {
-      cb(e, trips);
+  app.get('/api/activity/', authenticate, function(req, res) {
+    request.get({
+      uri: 'https://api.automatic.com/v1/trips',
+      qs: { page: req.query.page, per_page: req.query.per_page || 100 },
+      headers: {Authorization: 'token ' + req.session.automatic_access_token}
+    }, function(e, r, body) {
+      try {
+        res.json(JSON.parse(body));
+      } catch(e) {
+        console.log("error: " + e);
+        res.json(400, {"message": "Invalid access_token"});
+      }
     });
-  }
-
-
-  function filterTrips(trips, trip_ids) {
-    return _.filter(trips, function(trip) {
-      return trip_ids.indexOf(trip.id) != -1;
-    });
-  }
-
-
-  function fieldNames() {
-    return [
-      'vehicle',
-      'start location name',
-      'start location lat',
-      'start location lon',
-      'start location accuracy (meters)',
-      'start time',
-      'end location name',
-      'end location lat',
-      'end location lon',
-      'end location accuracy (meters)',
-      'end time',
-      'path',
-      'distance (meters)',
-      'hard accelerations',
-      'hard_brakes',
-      'duration over 80 mph (secs)',
-      'duration over 75 mph (secs)',
-      'duration over 70 mph (secs)',
-      'fuel cost (USD)',
-      'fuel volume (gal)',
-      'average mpg'
-    ]
-  }
-
-
-  function tripToArray(t) {
-    return [
-      formatVehicle(t.vehicle),
-      t.start_location.name,
-      t.start_location.lat,
-      t.start_location.lon,
-      t.start_location.accuracy_m,
-      moment(t.start_time).format('YYYY-M-D h:mm A'),
-      t.end_location.name,
-      t.end_location.lat,
-      t.end_location.lon,
-      t.end_location.accuracy_m,
-      moment(t.end_time).format('YYYY-M-D h:mm A'),
-      t.path,
-      t.distance_m,
-      t.hard_accels,
-      t.hard_brakes,
-      t.duration_over_80_s,
-      t.duration_over_75_s,
-      t.duration_over_70_s,
-      t.fuel_cost_usd,
-      t.fuel_volume_gal,
-      t.average_mpg
-    ]
-  }
-
-  function formatVehicle(v) {
-    return [(v.year || ''), (v.make || ''), (v.model || '')].join(' ');
-  }
+  });
 
 
   app.get('/redirect-automatic/', function(req, res) {
@@ -218,6 +113,7 @@ module.exports = function routes(app){
       var access_token = JSON.parse(body || '{}')
       if (access_token.access_token) {
         req.session.jawbone_access_token = access_token.access_token;
+        console.log(req.session.jawbone_access_token)
         res.redirect('/');
       } else {
         res.json({error: 'No access token'});

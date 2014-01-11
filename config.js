@@ -39,10 +39,10 @@ module.exports = function(app){
   });
 
   keen.configure({
-      projectId: "<keenProjectId>",
-      writeKey: "<keenWriteKey>",
-      readKey: "<keenReadKey>",
-      masterKey: "<keenMasterKey>"
+      projectId: process.env.KEEN_PROJECT_ID || keys.keenProjectId
+    , writeKey: process.env.KEEN_WRITE_KEY || keys.keenWriteKey
+    , readKey: process.env.KEEN_READ_KEY || keys.keenReadKey
+    , masterKey: process.env.KEEN_MASTER_KEY || keys.keenMasterKey
   });
 
   // Dev

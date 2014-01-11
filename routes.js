@@ -68,6 +68,21 @@ module.exports = function routes(app){
   });
 
 
+  app.get('/api/goals/', authenticate, function(req, res) {
+    request.get({
+      uri: 'https://jawbone.com/nudge/api/users/@me/goals',
+      headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
+    }, function(e, r, body) {
+      try {
+        res.json(JSON.parse(body));
+      } catch(e) {
+        console.log("error: " + e);
+        res.json(400, {"message": "Invalid access_token"});
+      }
+    });
+  });
+
+
   app.get('/redirect-automatic/', function(req, res) {
     if(req.query.code) {
       request.post({

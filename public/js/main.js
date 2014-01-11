@@ -1,7 +1,4 @@
-var end = moment(),
-    fetching = false,
-    cache = [],
-    viewType = 'tile';
+var totalMoves;
 
 fetchTrips();
 fetchMoves();
@@ -61,7 +58,7 @@ function fetchMoves() {
 
 function processMoves(moves) {
   //sum moves for last 7 days
-  var totalMoves = _.reduce(moves, function(memo, day) {
+  totalMoves = _.reduce(moves, function(memo, day) {
     return {
         distance: memo.distance + day.details.distance
       , calories: memo.calories + day.details.calories
@@ -73,6 +70,32 @@ function processMoves(moves) {
   $('#moves .movesSteps').html(formatNumber(totalMoves.steps));
   $('#moves .movesDistance').html(formatDistance(totalMoves.distance));
   $('#moves .movesCalories').html(totalMoves.calories.toFixed(0));
+
+  fetchGoals();
+}
+
+
+function fetchGoals() {
+  showLoading();
+  $.getJSON('/api/goals/', {})
+    .done(function(data) {
+      hideLoading();
+      if(data && data.data && data.data) {
+        processGoals(data.data);
+      } else {
+        showAlert('No trips found', 'warning');
+      }
+      fetching = false;
+    })
+    .fail(function(jqhxr, textStatus, error) {
+      showAlert('Unable to fetch moves (' +jqhxr.status + ' ' + error + ')', 'danger');
+    });
+}
+
+
+function processGoals(goals) {
+  var weeklyGoal = goals.move_steps * 7;
+  $('#moves .movesPercentOfGoal').html(formatPercent(totalMoves.steps / weeklyGoal));
 }
 
 
@@ -206,6 +229,10 @@ function formatNumber(number) {
   } else {
     return number.toFixed(1);
   }
+}
+
+function formatPercent(fraction) {
+  return (fraction * 100).toFixed(0) + '%';
 }
 
 

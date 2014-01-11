@@ -1,0 +1,340 @@
+body {
+  background: #e1e1e1;
+}
+
+#wrapper {
+  width: 1000px;
+  margin: 0 auto;
+  background: #FFF;
+  overflow: hidden;
+  padding: 10px 20px 20px 20px;
+  position: relative;
+  border: 1px solid #ccc;
+}
+
+#logout {
+  float: right;
+}
+
+.statRow {
+  margin-bottom: 15px;
+}
+
+.statLabel {
+  font-size: 20px;
+  font-weight: bold;
+  width: 200px;
+  float: left;
+  padding-top: 12px;
+  margin-left: 5px;
+}
+
+.stat {
+  border: 6px solid #666;
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  width: 50px;
+  float: left;
+  text-align: center;
+  height: 50px;
+}
+
+.titlebar {
+  margin-top: 0;
+  margin-bottom: 5px;
+  letter-spacing: 3px;
+  font-size: 44px;
+  font-weight: bold;
+}
+
+.tagline {
+  color: #666;
+}
+
+#topmenu {
+  position: absolute;
+  top: 28px;
+  right: 20px;
+  width: 650px;
+}
+
+.alert {
+  clear: both;
+  display: none;
+  margin-top: 20px;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.sign-in {
+  margin-top: 20px;
+}
+
+.sign-in .btn {
+  display: block;
+  margin: 0 auto;
+  width: 250px;
+  margin-top:12px;
+}
+
+.sign-in .btn .automatic-logo {
+  height: 24px;
+  width: 24px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+  background: url(/images/automatic-logo.png) 0 0 no-repeat;
+}
+
+#trips {
+  clear: both;
+  margin-top: 30px;
+  color: #777;
+}
+
+.trip.tile {
+  overflow: hidden;
+  background: #e5e5e5;
+  margin: 25px 0;
+}
+
+.trip.tile .times {
+  width: 100px;
+  float: left;
+  font-size: 12px;
+  padding: 10px;
+  position: relative;
+}
+
+.trip.tile .duration {
+  margin-top: 41px;
+  font-weight: bold;
+}
+
+.trip.tile .startTime {
+  margin-top: 37px;
+}
+
+.trip.tile .tripLine {
+  position: absolute;
+  width: 6px;
+  height: 150px;
+  background-color: #08b1d5;
+  right: 10px;
+  top: 16px;
+}
+
+.trip.tile .tripLine div {
+  width: 18px;
+  height: 18px;
+  background-color: #08b1d5;
+  border: 5px solid #08b1d5;
+  border-radius: 9px;
+  margin-left: -6px;
+}
+
+.trip.tile .tripLine div:first-child {
+  margin-top: -3px;
+}
+
+.trip.tile .tripLine div:last-child {
+  position: absolute;
+  bottom: 0;
+}
+
+.trip.tile .tripSummary {
+  float: left;
+  width: 400px;
+  padding: 10px;
+}
+
+.trip.tile .startLocation,
+.trip.tile .endLocation {
+  font-size: 18px;
+}
+
+.trip.tile .tripSummaryBox {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 7px 10px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.trip.tile .distance {
+  width: 33%;
+  float: left;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.trip.tile .distance::after {
+  content: ' MILES';
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.trip.tile .mpg {
+  width: 33%;
+  float: left;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.trip.tile .mpg::after {
+  content: ' MPG';
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.trip.tile .fuelCost {
+  width: 33%;
+  float: left;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.trip.tile .fuelCost::before {
+  content: '$';
+  font-size: 14px;
+  font-weight: normal;
+  padding-right: 4px;
+  vertical-align: 9px;
+}
+
+.trip.tile .fuelCost::after {
+  width: 21px;
+  height: 28px;
+  background: url(/images/fuel.png) 0 3px no-repeat;
+  content: ' ';
+  display: inline-block;
+}
+
+.trip.tile .hardBrakes {
+  clear: both;
+  float: left;
+  width: 25px;
+  height: 25px;
+  font-weight: bold;
+  box-sizing: border-box;
+  padding-top: 2px;
+  text-align: center;
+  margin-right: 115px;
+  position: relative;
+}
+
+.trip.tile .hardBrakes::after {
+  content: 'Rough Brakes';
+  font-size: 10px;
+  line-height: 11px;
+  font-weight: normal;
+  position: absolute;
+  text-align: left;
+  margin-left: 13px;
+}
+
+.trip.tile .hardBrakes.someHardBrakes::after {
+  margin-left: 10px;
+}
+
+.trip.tile .hardBrakes.noHardBrakes {
+  background: url(/images/check-circle.png) 0 0 no-repeat;
+}
+
+.trip.tile .hardBrakes.someHardBrakes {
+  background: url(/images/warning-circle.png) 0 0 no-repeat;
+}
+
+.trip.tile .hardAccels {
+  float: left;
+  width: 25px;
+  height: 25px;
+  font-weight: bold;
+  box-sizing: border-box;
+  padding-top: 2px;
+  text-align: center;
+  margin-right: 115px;
+  position: relative;
+}
+
+.trip.tile .hardAccels::after {
+  content: 'Hard Accels';
+  font-size: 10px;
+  line-height: 11px;
+  font-weight: normal;
+  position: absolute;
+  text-align: left;
+  margin-left: 13px;
+}
+
+.trip.tile .hardAccels.someHardAccels::after {
+  margin-left: 10px;
+}
+
+.trip.tile .hardAccels.noHardAccels {
+  background: url(/images/check-circle.png) 0 0 no-repeat;
+}
+
+.trip.tile .hardAccels.someHardAccels {
+  background: url(/images/warning-circle.png) 0 0 no-repeat;
+}
+
+.trip.tile .durationOver70 {
+  font-size: 11px;
+  float: left;
+  width: 25px;
+  height: 25px;
+  font-weight: normal;
+  box-sizing: border-box;
+  padding-top: 5px;
+  text-align: center;
+  position: relative;
+}
+
+.trip.tile .durationOver70::after {
+  content: 'Under 70 MPH';
+  font-size: 10px;
+  line-height: 11px;
+  font-weight: normal;
+  position: absolute;
+  text-align: left;
+  margin-left: 13px;
+  width: 40px;
+  margin-top: -3px;
+}
+
+.trip.tile .durationOver70.someSpeeding::after {
+  content: 'Min Over 70 MPH';
+  color: #777;
+  width: 42px;
+  margin-left: 6px;
+}
+
+.trip.tile .durationOver70.noSpeeding {
+  background: url(/images/check-square.png) 0 0 no-repeat;
+}
+
+.trip.tile .durationOver70.someSpeeding {
+  color: #FFF;
+  background: url(/images/warning-square.png) 0 0 no-repeat;
+}
+
+.trip.tile .map {
+  width: 450px;
+  height: 183px;
+  float: right;
+}
+
+.loading {
+  background: url(/images/loading.gif) center bottom no-repeat;
+  height: 100px;
+}

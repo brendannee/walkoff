@@ -18,6 +18,14 @@ module.exports = function(app){
   }
   app.set('automaticAPI', automaticAPI);
 
+  var jawboneAPI = {
+      jawboneClientId: process.env.JAWBONE_CLIENT_ID || keys.jawboneClientId
+    , jawboneClientSecret: process.env.JAWBONE_CLIENT_SECRET || keys.jawboneClientSecret
+    , jawboneAuthorizeUrl: process.env.JAWBONE_AUTHORIZE_URL || keys.jawboneAuthorizeUrl
+    , jawboneAuthTokenUrl: process.env.JAWBONE_AUTH_TOKEN_URL || keys.jawboneAuthTokenUrl
+  }
+  app.set('jawboneAPI', jawboneAPI);
+
   app.configure(function(){
     this
       .use(express.cookieParser('rXrq6xCSJu'))

@@ -12,7 +12,6 @@
     , "underscore": "= 1.5.x"
     , "jade": "0.x"
     , "async": "0.2.x"
-    , "express-csv": "0.x"
     , "moment": "2.4.x"
   }
 }

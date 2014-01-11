@@ -8,18 +8,25 @@ module.exports = function routes(app){
 
   var automaticAPI = app.get('automaticAPI');
 
+  var jawboneAPI = app.get('jawboneAPI');
+
   app.get('/', function(req, res) {
-    req.session.access_token = 'eec57d208a73151e13af127d656337f78b099141';
-    if(req.session && req.session.access_token) {
+    //req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
+    if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {
       res.render('app', {loggedIn: true});
     } else {
-      res.render('index');
+      res.render('index', {automatic_access_token: (req.session.automatic_access_token), jawbone_access_token: (req.session.jawbone_access_token)});
     }
   });
 
-  app.get('/authorize/', function(req, res) {
+  app.get('/authorize-automatic/', function(req, res) {
       res.redirect(automaticAPI.automaticAuthorizeUrl + '?client_id=' + automaticAPI.automaticClientId + '&response_type=code&scope=' + automaticAPI.automaticScopes)
   });
+
+  app.get('/authorize-jawbone/', function(req, res) {
+      res.redirect(jawboneAPI.jawboneAuthorizeUrl + '?client_id=' + jawboneAPI.jawboneClientId + '&redirect_uri=' + encodeURIComponent('https://walkoff.herokuapp.com/redirect-jawbone/') + '&response_type=code&scope=basic_read move_read')
+  });
+
 
   app.get('/logout/', function(req, res) {
     req.session.destroy();
@@ -31,7 +38,7 @@ module.exports = function routes(app){
     request.get({
       uri: 'https://api.automatic.com/v1/trips',
       qs: { page: req.query.page, per_page: req.query.per_page || 100 },
-      headers: {Authorization: 'token ' + req.session.access_token}
+      headers: {Authorization: 'token ' + req.session.automatic_access_token}
     }, function(e, r, body) {
       try {
         res.json(JSON.parse(body));
@@ -83,7 +90,7 @@ module.exports = function routes(app){
     async.until(function(){ return finished }, function(cb) {
       request.get({
         uri: uri,
-        headers: {Authorization: 'token ' + req.session.access_token}
+        headers: {Authorization: 'token ' + req.session.automatic_access_token}
       }, function(e, r, body) {
         trips = trips.concat(JSON.parse(body));
         link_headers = parse_link_header(r.headers['link']);
@@ -165,7 +172,7 @@ module.exports = function routes(app){
   }
 
 
-  app.get('/redirect/', function(req, res) {
+  app.get('/redirect-automatic/', function(req, res) {
     if(req.query.code) {
       request.post({
         uri: automaticAPI.automaticAuthTokenUrl,
@@ -183,8 +190,35 @@ module.exports = function routes(app){
     function saveAuthToken(e, r, body) {
       var access_token = JSON.parse(body || '{}')
       if (access_token.access_token) {
-        req.session.access_token = access_token.access_token;
-        req.session.scopes = access_token.scopes;
+        req.session.automatic_access_token = access_token.access_token;
+        req.session.automatic_scopes = access_token.scopes;
+        res.redirect('/');
+      } else {
+        res.json({error: 'No access token'});
+      }
+    }
+  });
+
+
+  app.get('/redirect-jawbone/', function(req, res) {
+    if(req.query.code) {
+      request.post({
+        uri: jawboneAPI.jawboneAuthTokenUrl,
+        form: {
+            client_id: jawboneAPI.jawboneClientId
+          , client_secret: jawboneAPI.jawboneClientSecret
+          , code: req.query.code
+          , grant_type: 'authorization_code'
+        }
+      }, saveAuthToken)
+    } else {
+      res.json({error: 'No code provided'});
+    }
+
+    function saveAuthToken(e, r, body) {
+      var access_token = JSON.parse(body || '{}')
+      if (access_token.access_token) {
+        req.session.jawbone_access_token = access_token.access_token;
         res.redirect('/');
       } else {
         res.json({error: 'No access token'});
@@ -194,7 +228,7 @@ module.exports = function routes(app){
 
 
   function authenticate(req, res, next) {
-    if(!req.session || !req.session.access_token) {
+    if(!req.session || !req.session.automatic_access_token || !req.session.jawbone_access_token) {
       res.redirect('/');
     } else {
       next();

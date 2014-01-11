@@ -5,5 +5,12 @@ block content
     .panel-body.row
       .col-md-4.description Compare your Driving and Physical Activity
       .col-md-6
-        a.center-block.btn.btn-primary.btn-lg(href="/authorize/") <span class="icon automatic-logo"></span>Sign in with Automatic
+        if automatic_access_token
+          Logged into Automatic
+        else
+          a.center-block.btn.btn-primary.btn-lg(href="/authorize-automatic/") <span class="icon automatic-logo"></span>Sign in with Automatic
+        if jawbone_access_token
+          Logged into Jawbone
+        else
+          a.center-block.btn.btn-primary.btn-lg(href="/authorize-jawbone/") <span class="icon "></span>Sign in with Jawbone
 

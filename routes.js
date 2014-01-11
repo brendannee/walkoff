@@ -3,6 +3,7 @@ var request = require('request'),
     csv = require('express-csv'),
     _ = require('underscore'),
     moment = require('moment');
+    keen = require('keen.io');
 
 module.exports = function routes(app){
 
@@ -10,7 +11,7 @@ module.exports = function routes(app){
 
   var jawboneAPI = app.get('jawboneAPI');
 
-  app.get('/', function(req, res) {
+  app.get('/', function(req, res) { 
     //req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
     if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {
       res.render('app', {loggedIn: true});

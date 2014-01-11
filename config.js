@@ -37,6 +37,13 @@ module.exports = function(app){
       .set('view engine', 'jade')
   });
 
+  var keen = keen.configure({
+      projectId: "<keenProjectId>",
+      writeKey: "<keenWriteKey>",
+      readKey: "<keenReadKey>",
+      masterKey: "<keenMasterKey>"
+  });
+
   // Dev
   app.configure('development', function(){
     this

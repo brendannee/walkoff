@@ -30,7 +30,7 @@ module.exports = function(app){
     this
       .use(express.cookieParser('rXrq6xCSJu'))
       .use(express.bodyParser())
-      .use(express.session({store: store, secret: '58675874ER1giugiuga'}))
+      .use(express.session({store: store, secret: '576d76d76FGFQEDY6uga'}))
       .enable('error templates')
       .use(express.static(__dirname + '/public'))
       .set('views', __dirname + '/views')

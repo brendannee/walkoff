@@ -4,6 +4,7 @@ var end = moment(),
     viewType = 'tile';
 
 fetchTrips();
+fetchMoves();
 
 
 function fetchTrips() {
@@ -36,6 +37,42 @@ function processTrips(data) {
 
   $('#driving .tripCount').html(trips.length);
   $('#driving .travelTime').html(travelTime);
+}
+
+
+function fetchMoves() {
+  showLoading();
+  $.getJSON('/api/moves/', {})
+    .done(function(data) {
+      console.log(data)
+      hideLoading();
+      if(data && data.data && data.data.items && data.data.items.length) {
+        processMoves(data.data.items);
+      } else {
+        showAlert('No trips found', 'warning');
+      }
+      fetching = false;
+    })
+    .fail(function(jqhxr, textStatus, error) {
+      showAlert('Unable to fetch moves (' +jqhxr.status + ' ' + error + ')', 'danger');
+    });
+}
+
+
+function processMoves(moves) {
+  //sum moves for last 7 days
+  var totalMoves = _.reduce(moves, function(memo, day) {
+    return {
+        distance: memo.distance + day.details.distance
+      , calories: memo.calories + day.details.calories
+      , active_time: memo.active_time + day.details.active_time
+      , steps: memo.steps + day.details.steps
+    }
+  }, {distance: 0, calories: 0, active_time: 0, steps: 0});
+
+  $('#moves .movesSteps').html(formatNumber(totalMoves.steps));
+  $('#moves .movesDistance').html(formatDistance(totalMoves.distance));
+  $('#moves .movesCalories').html(totalMoves.calories.toFixed(0));
 }
 
 
@@ -83,7 +120,7 @@ function renderTile(div) {
           .text(formatDistance(trip.distance_m)))
         .append($('<div>')
           .addClass('mpg')
-          .text(formatMPG(trip.average_mpg)))
+          .text(formatNumber(trip.average_mpg)))
         .append($('<div>')
           .addClass('fuelCost')
           .text(formatFuelCost(trip.fuel_cost_usd)))
@@ -163,8 +200,12 @@ function formatLocation(location) {
 }
 
 
-function formatMPG(average_mpg) {
-  return average_mpg.toFixed(1);
+function formatNumber(number) {
+  if(number>100) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  } else {
+    return number.toFixed(1);
+  }
 }
 
 

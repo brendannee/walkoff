@@ -1,6 +1,7 @@
 var express = require('express')
   , MemoryStore = express.session.MemoryStore
-  , store = new MemoryStore();
+  , store = new MemoryStore()
+  , keen = require('keen.io');
 
 try {
   var keys = require('./keys');
@@ -35,6 +36,13 @@ module.exports = function(app){
       .use(express.static(__dirname + '/public'))
       .set('views', __dirname + '/views')
       .set('view engine', 'jade')
+  });
+
+  keen.configure({
+      projectId: "<keenProjectId>",
+      writeKey: "<keenWriteKey>",
+      readKey: "<keenReadKey>",
+      masterKey: "<keenMasterKey>"
   });
 
   // Dev

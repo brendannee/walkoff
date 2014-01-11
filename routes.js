@@ -1,6 +1,5 @@
 var request = require('request'),
     async = require('async'),
-    csv = require('express-csv'),
     _ = require('underscore'),
     moment = require('moment');
 

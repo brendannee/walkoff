@@ -1,6 +1,6 @@
 var tripsUnderTwoMiles
-  , vehicleTravelTime
-  , vehicleDistance
+  , drivingDuration
+  , drivingDistance
   , totalMoves;
 
 fetchTrips();
@@ -31,16 +31,16 @@ function processTrips(data) {
     return metersToMiles(trip.distance_m) <= 2;
   });
 
-  vehicleDistance =  _.reduce(tripsUnderTwoMiles, function(memo, trip) {
+  drivingDistance =  _.reduce(tripsUnderTwoMiles, function(memo, trip) {
     return memo + metersToMiles(trip.distance_m);
   }, 0);
 
-  vehicleTravelTime = _.reduce(tripsUnderTwoMiles, function(memo, trip) {
+  drivingDuration = _.reduce(tripsUnderTwoMiles, function(memo, trip) {
     return memo + (trip.end_time - trip.start_time)/(1000*60);
   }, 0).toFixed(0);
 
-  $('#driving .tripCount').html(tripsUnderTwoMiles.length);
-  $('#driving .travelTime').html(vehicleTravelTime);
+  $('[data-trips-under-two-miles]').html(tripsUnderTwoMiles.length);
+  $('[data-driving-duration').html(drivingDuration);
 
   showTrips(tripsUnderTwoMiles);
 }
@@ -80,9 +80,9 @@ function processMoves(moves) {
     }
   }, {distance: 0, calories: 0, active_time: 0, steps: 0});
 
-  $('#moves .movesSteps').html(formatNumber(totalMoves.steps));
-  $('#moves .movesDistance').html(formatNumber(metersToMiles(totalMoves.distance)));
-  $('#moves .movesCalories').html(totalMoves.calories.toFixed(0));
+  $('[data-steps]').html(formatNumber(totalMoves.steps));
+  $('[data-walking-distance]').html(formatNumber(metersToMiles(totalMoves.distance)));
+  $('[data-calories]').html(totalMoves.calories.toFixed(0));
 
   fetchGoals();
 }
@@ -109,10 +109,10 @@ function fetchGoals() {
 function processGoals(goals) {
   var weeklyGoal = goals.move_steps * 7;
   var stepsPerMile = totalMoves.steps / metersToMiles(totalMoves.distance);
-  var missedSteps = vehicleDistance * stepsPerMile;
+  var missedSteps = drivingDistance * stepsPerMile;
   var movesPercentOfGoalNoDriving = (totalMoves.steps + missedSteps) / weeklyGoal;
-  $('#moves .movesPercentOfGoal').html(formatPercent(totalMoves.steps / weeklyGoal));
-  $('#moves .movesPercentOfGoalNoDriving').html(formatPercent(movesPercentOfGoalNoDriving));
+  $('[data-percent-of-goal]').html(formatPercent(totalMoves.steps / weeklyGoal));
+  $('[data-percent-of-goal-no-driving]').html(formatPercent(movesPercentOfGoalNoDriving));
 }
 
 

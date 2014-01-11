@@ -1,6 +1,7 @@
 var express = require('express')
   , MemoryStore = express.session.MemoryStore
-  , store = new MemoryStore();
+  , store = new MemoryStore()
+  , keen = require('keen.io');
 
 try {
   var keys = require('./keys');
@@ -37,7 +38,7 @@ module.exports = function(app){
       .set('view engine', 'jade')
   });
 
-  var keen = keen.configure({
+  keen.configure({
       projectId: "<keenProjectId>",
       writeKey: "<keenWriteKey>",
       readKey: "<keenReadKey>",

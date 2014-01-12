@@ -184,22 +184,36 @@ module.exports = function routes(app){
   }
 
 
-  app.get('/webhook/', function(req, res) {
+  app.post('/webhook/', function(req, res) {
     users.findOne({automatic_id: req.body.user.id}, function (e, doc) {
-      res.json(doc);
+      if(doc) {
+        var trip = req.body.trip;
+        var distance_mi = (trip.distance_m / 1609).toFixed(1);
+        var duration = ((trip.end_time - trip.start_time) / (60*60*1000)).toFixed();
+        var title = 'Trip to ' + trip.start_location.nickname;
+        var note = 'Drive from ' + trip.start_location.nickname + ' to ' + trip.end_location.nickname + '. It took ' + duration + ' minutes to drive ' + distance_mi + ' miles and cost $' + trip.fuel_cost_usd.toFixed(2) + ' in fuel.';
+        request.post({
+          uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
+          form: {
+            title: title,
+            verb: 'drove',
+            note: note,
+            place_lat: trip.end_location.lat,
+            place_lon: trip.end_location.lon,
+            time_created: Math.round(trip.end_time/1000)
+          },
+          headers: {Authorization: 'Bearer ' + doc.jawbone_access_token}
+        }, function(e, r, body) {
+          try {
+            res.json(JSON.parse(body));
+          } catch(e) {
+            console.log("error: " + e);
+            res.json(400, {"message": "Invalid access_token"});
+          }
+        });
+      }
     });
-    // request.post({
-    //   uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
-    //   form: {title: 'Driving Trip', verb: 'drove', attributes: {"description": "Drive Event"}}
-    //   headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
-    // }, function(e, r, body) {
-    //   try {
-    //     res.json(JSON.parse(body));
-    //   } catch(e) {
-    //     console.log("error: " + e);
-    //     res.json(400, {"message": "Invalid access_token"});
-    //   }
-    // });
+
   });
 
 }

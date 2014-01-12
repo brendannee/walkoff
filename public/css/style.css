@@ -49,6 +49,21 @@ main{
   background: url(/images/homepage_bg.png) center 0 no-repeat;
   background-size: 200%;
   height: 651px;
+  position: relative;
+}
+
+.homepage-overlay {
+  position: absolute;
+  top: 0;
+  background: rgba(0,0,0,0.2);
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.homepage-content {
+  z-index: 2;
+  position: relative;
 }
 
 .homepage h1 {
@@ -73,6 +88,7 @@ main{
   color: #FFF;
   letter-spacing: 1px;
   line-height: 1.4;
+  max-width: 400px;
 }
 
 .auth-panel{

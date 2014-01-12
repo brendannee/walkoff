@@ -2,15 +2,17 @@ extends layout
 
 block content
   .homepage
-    h1 Walk More<br>Drive Less
+    .homepage-overlay
+    .homepage-content
+      h1 Walk More<br>Drive Less
 
-    h2 Sign in with Jawbone and Automatic to compare your driving and walking
+      h2 Sign in with Jawbone and Automatic to compare your driving and walking
 
-    section.auth-panel.jawbone
-      if !jawbone_access_token
-        a.auth-button.jawbone(href="/authorize-jawbone/") Sign in with Jawbone
-      else if !automatic_access_token
-        div.auth-button.jawbone.signedin Signed in with Jawbone
-        a.auth-button.automatic(href="/authorize-automatic/") Sign in with Automatic
+      section.auth-panel.jawbone
+        if !jawbone_access_token
+          a.auth-button.jawbone(href="/authorize-jawbone/") Sign in with Jawbone
+        else if !automatic_access_token
+          div.auth-button.jawbone.signedin Signed in with Jawbone
+          a.auth-button.automatic(href="/authorize-automatic/") Sign in with Automatic
 
 

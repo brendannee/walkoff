@@ -114,7 +114,7 @@ module.exports = function routes(app){
           {jawbone_access_token: req.session.jawbone_access_token},
           {$set: {automatic_access_token: access_token.access_token, automatic_id: automatic_id}},
           function(e, doc) {
-            res.redirect('/');
+            res.redirect(req.session.jawbone_redirect_url || '/');
           }
         );
       } else {
@@ -242,5 +242,10 @@ module.exports = function routes(app){
     });
 
   });
+
+  app.get('/authorize/', function(req, res) {
+    req.session.jawbone_redirect_url = req.query.redirect_url;
+    res.redirect('/authorize-jawbone/');
+  })
 
 }

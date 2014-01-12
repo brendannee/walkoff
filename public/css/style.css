@@ -219,6 +219,7 @@ main{
 }
 
 #loading-bar {
+  display: none;
   width: 10%;
   height: 1px;
   background: rgba(0, 245, 255, 1);

@@ -185,7 +185,10 @@ function showLoading(text, phase) {
     .text(text)
     .fadeIn();
 
-  $('#loading-bar').removeClass().addClass(phase);
+  $('#loading-bar')
+    .show()
+    .removeClass()
+    .addClass(phase);
 }
 
 

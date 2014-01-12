@@ -195,12 +195,15 @@ module.exports = function routes(app){
         var duration = ((trip.end_time - trip.start_time) / (60*60*1000)).toFixed();
         var title = 'Trip to ' + trip.start_location.nickname;
         var note = 'Drive from ' + trip.start_location.nickname + ' to ' + trip.end_location.nickname + '. It took ' + duration + ' minutes to drive ' + distance_mi + ' miles and cost $' + trip.fuel_cost_usd.toFixed(2) + ' in fuel.';
+        var path = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
+        var markers = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
         request.post({
           uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
           form: {
             title: title,
             verb: 'drove',
             note: note,
+            image_url: 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + markers + '&path=' +  path + '&size=600x600&sensor=false',
             place_lat: trip.end_location.lat,
             place_lon: trip.end_location.lon,
             time_created: Math.round(trip.end_time/1000)

@@ -1,11 +1,15 @@
 extends layout
 
 block content
+  .homepage
+    h1 Walk More, Drive Less
 
-  section.auth-panel.jawbone
-    if !jawbone_access_token
-      a.auth-button.jawbone(href="/authorize-jawbone/") Sign in with Jawbone
-    else if !automatic_access_token
-      a.auth-button.automatic(href="/authorize-automatic/") Sign in with Automatic
+    h2 Sign in with Jawbone and Automatic to compare your driving and walking
+
+    section.auth-panel.jawbone
+      if !jawbone_access_token
+        a.auth-button.jawbone(href="/authorize-jawbone/") Sign in with Jawbone
+      else if !automatic_access_token
+        a.auth-button.automatic(href="/authorize-automatic/") Sign in with Automatic
 
 

@@ -13,15 +13,16 @@ function fetchMoves() {
   showLoading('Loading your moves', 'moves');
   $.getJSON('/api/moves/', {})
     .done(function(data) {
+      console.log(data)
       if(data && data.data && data.data.items && data.data.items.length) {
         processMoves(data.data.items);
       } else {
-        showAlert('No moves found', 'warning');
+        console.log('No moves found');
       }
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch moves (' + jqhxr.status + ' ' + error + ')', 'danger');
+      console.log('Unable to fetch moves (' + jqhxr.status + ' ' + error + ')');
     });
 }
 
@@ -53,12 +54,12 @@ function fetchGoals() {
       if(data && data.data) {
         processGoals(data.data);
       } else {
-        showAlert('No goals found', 'warning');
+        console.log('No goals found');
       }
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch goals (' + jqhxr.status + ' ' + error + ')', 'danger');
+      console.log('Unable to fetch goals (' + jqhxr.status + ' ' + error + ')');
     });
 }
 
@@ -82,12 +83,12 @@ function fetchTrips() {
         processTrips(data);
         // trackTrips();
       } else {
-        showAlert('No trips found', 'warning');
+        console.log('No trips found');
       }
       fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch trips (' + jqhxr.status + ' ' + error + ')', 'danger');
+      console.log('Unable to fetch trips (' + jqhxr.status + ' ' + error + ')');
     });
 }
 
@@ -197,17 +198,6 @@ function hideLoading() {
   $('#loading-bar').fadeOut();
 
   $('#content').show();
-}
-
-
-function showAlert(msg, type) {
-  var type = type || 'info';
-  $('#alert').html(msg).removeClass().addClass('alert alert-' + type).fadeIn();
-}
-
-
-function hideAlert() {
-  $('#alert').fadeOut();
 }
 
 

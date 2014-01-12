@@ -25,6 +25,7 @@ header[role="banner"]{
 
 #content {
   display: none;
+  margin-bottom: 30px;
 }
 
 #content h2:first-child {
@@ -104,6 +105,7 @@ main{
   border-right: 1px solid rgb(220,220,220);
   overflow: auto;
   min-height: 500px;
+  position: relative;
 }
 .app-content h2 span {
   font-size: 30px;
@@ -241,6 +243,14 @@ main{
 
 #loading-bar.trips {
   width: 100% !important;
+}
+
+a.logout {
+  color: rgba(0,0,0,0.5);
+  text-decoration: none;
+  position: absolute;
+  bottom: 5px;
+  right: 15px;
 }
 
 

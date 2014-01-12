@@ -6,10 +6,10 @@ bold = 700
 
 *, *:before, *:after {
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
  }
 html{
   font: normal 1em "effra";
-  -webkit-font-smoothing: antialised;
 }
 body{
   background: rgb(248,248,248);
@@ -83,14 +83,25 @@ main{
 .trip{
   margin: 1em 0;
   overflow: hidden;
+  border-radius: .5em;
+  border: 1px solid rgba(0,0,0,.2);
+  background: rgba(0,0,0,.1);
 }
 .trip::after{
   content: "";
   display: table;
   clear: both;
 }
+.triptitle{
+  margin: .25em;
+  font-weight: 400;
+  color: rgba(0,0,0,.5);
+  font-size: 1em;
+}
 .statbox{
   position: relative;
+  border-top: 1px solid rgba(0,0,0,.2);
+  border-bottom: 1px solid rgba(0,0,0,.2);
 }
 .statbox::after{
   content: "";
@@ -100,25 +111,28 @@ main{
 .statbox .or{
   display: block;
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   color: white;
   background: rgb(90,90,90);
-  font-weight: 300;
-  padding: 6px 0 0 0;
+  font-weight: 400;
+  padding: 8px 0 0 0;
   text-align: center;
   border-radius: 100%;
-  font-size: 10px;
-  top: 32px;
+  font-size: 14px;
+  top: 34px;
   left: 50%;
-  letter-spacing: 1px;
-  margin-left: -12px;
+  margin-left: -16px;
 }
 .stat{
   width: 50%;
   text-align: center;
   padding: 1em 0;
   overflow: auto;
+}
+.stat em{
+  font-style: normal;
+  opacity: .5;
 }
 .stat var{
   font-style: normal;
@@ -129,16 +143,15 @@ main{
 .stat span{
   font-style: normal;
   display: block;
+  opacity: .5;
 }
 .length{
   float: left;
   background: rgb(255,220,0);
   color: rgb(40,40,40);
-  border-radius: .5em 0 0 .5em;
 }
 .equivalence{
   float: right;
   background: rgb(61,153,112);
-  border-radius: 0 .5em .5em 0;
   color: rgb(248,248,248);
 }

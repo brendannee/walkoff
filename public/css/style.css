@@ -22,9 +22,9 @@ header[role="banner"]{
 .titlebar{
   font-weight: normal;
   letter-spacing: .175em;
-  font-size: 2em;
+  font-size: 1em;
   margin: .5em;
-  font-weight: 300;
+  font-weight: 400;
 }
 main{
   position: relative;
@@ -72,4 +72,8 @@ main{
 .stat::after{
   content: "";
   margin-left: .25em;
+}
+
+.trip{
+  margin: 1em 0;
 }

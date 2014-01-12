@@ -3,7 +3,7 @@ extends layout
 block content
   section.app-content
     #driving
-      h2.headline In the last 7 days, you've&hellip;
+      //- h2.headline In the last 7 days, you've made
       ul.statlist
         li
           var.stat(data-trips-under-two-miles)
@@ -12,22 +12,22 @@ block content
           var.stat(data-driving-duration)
           span.statLabel Minutes Driving
     #moves
-        ul.statlist
-          li
-            var.stat(data-steps)
-            span.statLabel Steps
-          li
-            var.stat(data-percent-of-goal)
-            span.statLabel Percent of Goal
-          li
-            var.stat(data-percent-of-goal-no-driving)
-            span.statLabel Percent of Goal You Would Be At If You Didn't Drive For Trips Under 2 Miles
-          li
-            var.stat(data-walking-distance)
-            span.statLabel Miles Walked
-          li
-            var.stat(data-calories)
-            span.statLabel Calories
+      ul.statlist
+        li
+          var.stat(data-steps)
+          span.statLabel Steps
+        li
+          var.stat(data-percent-of-goal)
+          span.statLabel Percent of Goal
+        li
+          var.stat(data-percent-of-goal-no-driving)
+          span.statLabel Percent of Goal You Would Be At If You Didn't Drive For Trips Under 2 Miles
+        li
+          var.stat(data-walking-distance)
+          span.statLabel Miles Walked
+        li
+          var.stat(data-calories)
+          span.statLabel Calories
 
-  #trips
+    #trips
   .loading

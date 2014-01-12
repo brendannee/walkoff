@@ -4,6 +4,9 @@ regular = 400
 bold = 700
 */
 
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+ }
 html{
   font: normal 1em "effra";
   -webkit-font-smoothing: antialised;
@@ -65,15 +68,77 @@ main{
   list-style: none;
   padding: 0;
 }
-.stat{
+.statlist..stat{
   font-style: normal;
   font-weight: 700;
 }
-.stat::after{
+.statlist.stat::after{
   content: "";
   margin-left: .25em;
 }
-
+#trips{
+  list-style: none;
+  padding: 0;
+}
 .trip{
   margin: 1em 0;
+  overflow: hidden;
+}
+.trip::after{
+  content: "";
+  display: table;
+  clear: both;
+}
+.statbox{
+  position: relative;
+}
+.statbox::after{
+  content: "";
+  display: table;
+  clear: both;
+}
+.statbox .or{
+  display: block;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  color: white;
+  background: rgb(90,90,90);
+  font-weight: 300;
+  padding: 6px 0 0 0;
+  text-align: center;
+  border-radius: 100%;
+  font-size: 10px;
+  top: 32px;
+  left: 50%;
+  letter-spacing: 1px;
+  margin-left: -12px;
+}
+.stat{
+  width: 50%;
+  text-align: center;
+  padding: 1em 0;
+  overflow: auto;
+}
+.stat var{
+  font-style: normal;
+  display: block;
+  font-size: 2.5em;
+  line-height: .9;
+}
+.stat span{
+  font-style: normal;
+  display: block;
+}
+.length{
+  float: left;
+  background: rgb(255,220,0);
+  color: rgb(40,40,40);
+  border-radius: .5em 0 0 .5em;
+}
+.equivalence{
+  float: right;
+  background: rgb(61,153,112);
+  border-radius: 0 .5em .5em 0;
+  color: rgb(248,248,248);
 }

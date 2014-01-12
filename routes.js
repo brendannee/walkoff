@@ -2,7 +2,7 @@ var request = require('request'),
     async = require('async'),
     _ = require('underscore'),
     moment = require('moment');
-    keen = require('keen.io');
+    keen = require("keen.io");
 
 module.exports = function routes(app){
 
@@ -10,8 +10,8 @@ module.exports = function routes(app){
   var jawboneAPI = app.get('jawboneAPI');
 
   app.get('/', function(req, res) {
-    req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
-    req.session.jawbone_access_token = 'Je5CDuGC9ORcrdAxf3gA43cL2pSXewR5GKNSPxdpEdkwDHRMyyO4-hex9ftlpMur8ooJl-U9fXdXW2MSxp0B_VECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
+    // req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
+    // req.session.jawbone_access_token = 'Je5CDuGC9ORcrdAxf3gA43cL2pSXewR5GKNSPxdpEdkwDHRMyyO4-hex9ftlpMur8ooJl-U9fXdXW2MSxp0B_VECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
     if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {
       res.render('app', {loggedIn: true});
     } else {
@@ -26,7 +26,7 @@ module.exports = function routes(app){
 
 
   app.get('/authorize-jawbone/', function(req, res) {
-      res.redirect(jawboneAPI.jawboneAuthorizeUrl + '?client_id=' + jawboneAPI.jawboneClientId + '&redirect_uri=' + encodeURIComponent('https://walkoff.herokuapp.com/redirect-jawbone/') + '&response_type=code&scope=basic_read move_read')
+      res.redirect(jawboneAPI.jawboneAuthorizeUrl + '?client_id=' + jawboneAPI.jawboneClientId + '&redirect_uri=' + encodeURIComponent('https://walkoff.herokuapp.com/redirect-jawbone/') + '&response_type=code&scope=basic_read move_read generic_event_write')
   });
 
 
@@ -56,21 +56,6 @@ module.exports = function routes(app){
     request.get({
       uri: 'https://jawbone.com/nudge/api/users/@me/moves',
       qs: { start_time: ((Date.now()/1000) - 7*24*60*60).toFixed(0) },
-      headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
-    }, function(e, r, body) {
-      try {
-        res.json(JSON.parse(body));
-      } catch(e) {
-        console.log("error: " + e);
-        res.json(400, {"message": "Invalid access_token"});
-      }
-    });
-  });
-
-
-  app.get('/api/goals/', authenticate, function(req, res) {
-    request.get({
-      uri: 'https://jawbone.com/nudge/api/users/@me/goals',
       headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
     }, function(e, r, body) {
       try {
@@ -128,6 +113,7 @@ module.exports = function routes(app){
 
     function saveAuthToken(e, r, body) {
       var access_token = JSON.parse(body || '{}')
+      console.log(access_token.access_token);
       if (access_token.access_token) {
         req.session.jawbone_access_token = access_token.access_token;
         console.log(req.session.jawbone_access_token)
@@ -164,5 +150,22 @@ module.exports = function routes(app){
     }
     return links;
   }
+
+
+  app.get('/webhook/', function(req, res) {
+    console.log(req.body)
+    // request.post({
+    //   uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
+    //   form: {title: 'Driving Trip', verb: 'drove', attributes: {"description": "Drive Event"}}
+    //   headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
+    // }, function(e, r, body) {
+    //   try {
+    //     res.json(JSON.parse(body));
+    //   } catch(e) {
+    //     console.log("error: " + e);
+    //     res.json(400, {"message": "Invalid access_token"});
+    //   }
+    // });
+  });
 
 }

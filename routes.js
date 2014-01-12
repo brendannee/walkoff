@@ -138,18 +138,31 @@ module.exports = function routes(app){
       var access_token = JSON.parse(body || '{}')
       if (access_token.access_token) {
         req.session.jawbone_access_token = access_token.access_token;
-          users.findOne({jawbone_access_token: req.session.jawbone_access_token}, function (e, doc) {
-            if(!doc) {
-              users.insert({jawbone_access_token: req.session.jawbone_access_token}, function(e, doc) {
+        request.get({
+          uri: 'https://jawbone.com/nudge/api/users/@me',
+          headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
+        }, function(e, r, body) {
+          try {
+            var response = JSON.parse(body);
+            var jawbone_id = response.data.xid;
+            req.session.jawbone_id = jawbone_id;
+            users.findOne({jawbone_id: jawbone_id}, function (e, doc) {
+              if(!doc) {
+                users.insert({jawbone_access_token: req.session.jawbone_access_token, jawbone_id: jawbone_id}, function(e, doc) {
+                  res.redirect('/');
+                });
+              } else {
+                if(doc.automatic_access_token) {
+                  req.session.automatic_access_token = doc.automatic_access_token;
+                }
                 res.redirect('/');
-              });
-            } else {
-              if(doc.automatic_access_token) {
-                req.session.automatic_access_token = doc.automatic_access_token;
               }
-              res.redirect('/');
-            }
-          });
+            });
+          } catch(e) {
+            console.log("error: " + e);
+            res.json(400, {"message": "Invalid access_token"});
+          }
+        });
       } else {
         res.json({error: 'No access token'});
       }

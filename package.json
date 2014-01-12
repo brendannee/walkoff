@@ -13,6 +13,7 @@
     , "jade": "0.x"
     , "async": "0.2.x"
     , "moment": "2.4.x"
+    , "monk": "0.7.x"
     , "keen.io": "0.0.x"
   }
 }

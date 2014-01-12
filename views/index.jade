@@ -3,14 +3,9 @@ extends layout
 block content
 
   section.auth-panel.jawbone
-    if jawbone_access_token
-      p Logged into Jawbone
-    else
+    if !jawbone_access_token
       a.auth-button.jawbone(href="/authorize-jawbone/") Sign in with Jawbone
-
-    if automatic_access_token
-      p Logged into Automatic
-    else
+    else if !automatic_access_token
       a.auth-button.automatic(href="/authorize-automatic/") Sign in with Automatic
 
 

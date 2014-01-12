@@ -1,17 +1,19 @@
 var request = require('request'),
     async = require('async'),
     _ = require('underscore'),
-    moment = require('moment');
+    moment = require('moment'),
     keen = require('keen.io');
+
 
 module.exports = function routes(app){
 
   var automaticAPI = app.get('automaticAPI');
   var jawboneAPI = app.get('jawboneAPI');
+  var users = app.get('db').get('walkoffusers');
 
   app.get('/', function(req, res) {
     // req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
-    // req.session.jawbone_access_token = 'Je5CDuGC9ORcrdAxf3gA43cL2pSXewR5GKNSPxdpEdkwDHRMyyO4-hex9ftlpMur8ooJl-U9fXdXW2MSxp0B_VECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
+    // req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlhoY_mRHcsBU4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
     if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {
       res.render('app', {loggedIn: true});
     } else {
@@ -102,8 +104,14 @@ module.exports = function routes(app){
       var access_token = JSON.parse(body || '{}')
       if (access_token.access_token) {
         req.session.automatic_access_token = access_token.access_token;
-        req.session.automatic_scopes = access_token.scopes;
-        res.redirect('/');
+        var automatic_id = access_token.user.id;
+        users.update(
+          {jawbone_access_token: req.session.jawbone_access_token},
+          {$set: {automatic_access_token: access_token.access_token, automatic_id: automatic_id}},
+          function(e, doc) {
+            res.redirect('/');
+          }
+        );
       } else {
         res.json({error: 'No access token'});
       }
@@ -128,11 +136,20 @@ module.exports = function routes(app){
 
     function saveAuthToken(e, r, body) {
       var access_token = JSON.parse(body || '{}')
-      console.log(access_token.access_token);
       if (access_token.access_token) {
         req.session.jawbone_access_token = access_token.access_token;
-        console.log(req.session.jawbone_access_token)
-        res.redirect('/');
+          users.findOne({jawbone_access_token: req.session.jawbone_access_token}, function (e, doc) {
+            if(!doc) {
+              users.insert({jawbone_access_token: req.session.jawbone_access_token}, function(e, doc) {
+                res.redirect('/');
+              });
+            } else {
+              if(doc.automatic_access_token) {
+                req.session.automatic_access_token = doc.automatic_access_token;
+              }
+              res.redirect('/');
+            }
+          });
       } else {
         res.json({error: 'No access token'});
       }
@@ -168,7 +185,9 @@ module.exports = function routes(app){
 
 
   app.get('/webhook/', function(req, res) {
-    console.log(req.body)
+    users.findOne({automatic_id: req.body.user.id}, function (e, doc) {
+      res.json(doc);
+    });
     // request.post({
     //   uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
     //   form: {title: 'Driving Trip', verb: 'drove', attributes: {"description": "Drive Event"}}

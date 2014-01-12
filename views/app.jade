@@ -2,26 +2,26 @@ extends layout
 
 block content
   section.app-content
-    #driving
-      h2.headline In the last 7 days, you've made <span data-trips-under-two-miles>&nbsp;</span> trips under two miles
-      h2.headline You've walked <span ddata-percent-of-goal>&nbsp;</span> of your goal during that time.
+    .loading
+    #content
+      h2.headline In the last <span>7</span> days, you've made <span data-trips-under-two-miles>&nbsp;</span> trips under two miles.
 
-    ul#trips
-      li.trip
-        h3.triptitle your trip on Tuesday Morning        
-        .statbox
-          span.or but
-          .stat.length
-            em you drove
-            var(data-steps) &nbsp;
-            span steps
-          .stat.equivalence
-            em if you walked
-            var(data-percent-of-goal) &nbsp;
-            span of your goal
+      h2.headline If you had walked you would be at <span data-percent-of-goal-no-driving>&nbsp;</span> of your fitness goal.
 
-      h2.headline You would be at <span data-percent-of-goal-no-driving>&nbsp;</span> if you had walked all of the trips you drove which were less than two miles
+      ul#trips
+        li.trip
+          h3.triptitle Last 7 Days Fitness
+          .statbox
+            span.or but
+            .stat.length
+              em you walked
+              var(data-steps) &nbsp;
+              span steps
+            .stat.equivalence
+              em which is
+              var(data-percent-of-goal) &nbsp;
+              span of your goal
 
-      h2.headline Here are the trips you could have walked
 
-  .loading
+
+        h2.headline Here are the trips you could have walked

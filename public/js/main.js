@@ -9,12 +9,75 @@ var tripsUnderTwoMiles
 fetchMoves();
 
 
+function fetchMoves() {
+  showLoading('Loading your moves', 'moves');
+  $.getJSON('/api/moves/', {})
+    .done(function(data) {
+      if(data && data.data && data.data.items && data.data.items.length) {
+        processMoves(data.data.items);
+      } else {
+        showAlert('No moves found', 'warning');
+      }
+      fetching = false;
+    })
+    .fail(function(jqhxr, textStatus, error) {
+      showAlert('Unable to fetch moves (' + jqhxr.status + ' ' + error + ')', 'danger');
+    });
+}
+
+
+function processMoves(moves) {
+  //sum moves for last 7 days
+  totalMoves = _.reduce(moves, function(memo, day) {
+    return {
+        distance: memo.distance + day.details.distance
+      , calories: memo.calories + day.details.calories
+      , active_time: memo.active_time + day.details.active_time
+      , steps: memo.steps + day.details.steps
+    }
+  }, {distance: 0, calories: 0, active_time: 0, steps: 0});
+
+  $('[data-steps]').html(formatNumber(totalMoves.steps));
+  $('[data-walking-distance]').html(formatNumber(metersToMiles(totalMoves.distance)));
+  $('[data-calories]').html(totalMoves.calories.toFixed(0));
+
+  fetchGoals();
+}
+
+
+function fetchGoals() {
+  console.log('fetching Goals')
+  showLoading('Loading your goals', 'goals');
+  $.getJSON('/api/goals/', {})
+    .done(function(data) {
+      if(data && data.data) {
+        processGoals(data.data);
+      } else {
+        showAlert('No goals found', 'warning');
+      }
+      fetching = false;
+    })
+    .fail(function(jqhxr, textStatus, error) {
+      showAlert('Unable to fetch goals (' + jqhxr.status + ' ' + error + ')', 'danger');
+    });
+}
+
+
+function processGoals(goals) {
+  weeklyGoal = goals.move_steps * 7;
+  stepsPerMile = Math.round(totalMoves.steps / metersToMiles(totalMoves.distance));
+
+  $('[data-percent-of-goal]').html(formatPercent(totalMoves.steps / weeklyGoal));
+
+  fetchTrips();
+}
+
+
 function fetchTrips() {
   console.log('fetching Trips')
-  showLoading();
+  showLoading('Loading your trips', 'trips')
   $.getJSON('/api/trips/', {page: 1, per_page: 20})
     .done(function(data) {
-      hideLoading();
       if(data && data.length) {
         processTrips(data);
         // trackTrips();
@@ -62,72 +125,6 @@ function processTrips(data) {
 }
 
 
-function fetchMoves() {
-  console.log('fetching Moves')
-  showLoading();
-  $.getJSON('/api/moves/', {})
-    .done(function(data) {
-      hideLoading();
-      if(data && data.data && data.data.items && data.data.items.length) {
-        processMoves(data.data.items);
-      } else {
-        showAlert('No moves found', 'warning');
-      }
-      fetching = false;
-    })
-    .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch moves (' + jqhxr.status + ' ' + error + ')', 'danger');
-    });
-}
-
-
-function processMoves(moves) {
-  //sum moves for last 7 days
-  totalMoves = _.reduce(moves, function(memo, day) {
-    return {
-        distance: memo.distance + day.details.distance
-      , calories: memo.calories + day.details.calories
-      , active_time: memo.active_time + day.details.active_time
-      , steps: memo.steps + day.details.steps
-    }
-  }, {distance: 0, calories: 0, active_time: 0, steps: 0});
-
-  $('[data-steps]').html(formatNumber(totalMoves.steps));
-  $('[data-walking-distance]').html(formatNumber(metersToMiles(totalMoves.distance)));
-  $('[data-calories]').html(totalMoves.calories.toFixed(0));
-
-  fetchGoals();
-}
-
-
-function fetchGoals() {
-  console.log('fetching Goals')
-  showLoading();
-  $.getJSON('/api/goals/', {})
-    .done(function(data) {
-      hideLoading();
-      if(data && data.data) {
-        processGoals(data.data);
-      } else {
-        showAlert('No goals found', 'warning');
-      }
-      fetching = false;
-    })
-    .fail(function(jqhxr, textStatus, error) {
-      showAlert('Unable to fetch goals (' + jqhxr.status + ' ' + error + ')', 'danger');
-    });
-}
-
-
-function processGoals(goals) {
-  weeklyGoal = goals.move_steps * 7;
-  stepsPerMile = Math.round(totalMoves.steps / metersToMiles(totalMoves.distance));
-
-  $('[data-percent-of-goal]').html(formatPercent(totalMoves.steps / weeklyGoal));
-
-  fetchTrips();
-}
-
 function showTrips(trips) {
   var stepsPerMile = totalMoves.steps / metersToMiles(totalMoves.distance);
   trips.forEach(function(trip) {
@@ -139,8 +136,8 @@ function showTrips(trips) {
       .data('trip_id', trip.id)
       .data('trip', trip)
       .append($('<p>')
-        .addClass('triptime')
-        .html('Trip at ' + moment(trip.start_time).format('h:mm A on M/D/YYYY') + ' to ' + trip.end_location.name))
+        .addClass('triptitle')
+        .html('Trip at ' + moment(trip.start_time).format('h:mm A on M/D/YYYY') /*+ ' to ' + trip.end_location.name*/))
       .append($('<div>')
         .addClass('statbox')
         .append($('<span>')
@@ -162,6 +159,7 @@ function showTrips(trips) {
 
   //drawMap(trip);
   });
+  hideLoading();
 }
 
 
@@ -182,13 +180,20 @@ function drawMap(trip) {
   L.marker([trip.end_location.lat, trip.end_location.lon]).addTo(map);
 }
 
-function showLoading() {
-  $('.loading').fadeIn();
+function showLoading(text, phase) {
+  $('.loading')
+    .text(text)
+    .fadeIn();
+
+  $('#loading-bar').removeClass().addClass(phase);
 }
 
 
 function hideLoading() {
-  $('.loading').fadeOut();
+  $('.loading').hide();
+  $('#loading-bar').fadeOut();
+
+  $('#content').show();
 }
 
 

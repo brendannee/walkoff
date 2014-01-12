@@ -208,8 +208,12 @@ module.exports = function routes(app){
         var trip = req.body.trip;
         var distance_mi = (trip.distance_m / 1609).toFixed(1);
         var duration = ((trip.end_time - trip.start_time) / (60*60*1000)).toFixed();
-        var title = 'Trip to ' + trip.start_location.name;
-        var note = 'Drive from ' + trip.start_location.name + ' to ' + trip.end_location.name + '. It took ' + duration + ' minutes to drive ' + distance_mi + ' miles and cost $' + trip.fuel_cost_usd.toFixed(2) + ' in fuel.';
+        var stepsPerMile = 2100;
+        var missedSteps = distance_mi * 2100;
+        var dailyGoal = 10000;
+        var title = trip.start_location.name + ' instead of walking ' + missedSteps.toFixed(0) + ' steps';
+        var percentOfDailyGoal = ((missedSteps / dailyGoal) * 100).toFixed(0) + '%';
+        var note = 'Your drive from ' + trip.start_location.name + ' to ' + trip.end_location.name + '. It took ' + duration + ' minutes to drive ' + distance_mi + ' miles and cost $' + trip.fuel_cost_usd.toFixed(2) + ' in fuel.  Had you walked for this trip, it would have been ' + missedSteps.toFixed(0) + ' additional steps accounting for ' + percentOfDailyGoal + ' of your daily goal.';
         var path = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
         var markers = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
         request.post({

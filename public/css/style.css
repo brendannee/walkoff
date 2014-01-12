@@ -242,3 +242,11 @@ main{
   width: 100% !important;
 }
 
+
+@media (min-width: 600px) {
+  .homepage {
+    background-size: 100%;
+    width: 100%;
+  }
+}
+

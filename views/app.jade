@@ -1,26 +1,33 @@
 extends layout
 
 block content
-  #driving.col-md-4.col-md-offset-2
-    h3 In the last 7 days
-    .row.statRow
-      .stat(data-trips-under-two-miles)
-      .statLabel Trips Under 2 Miles
-    .row.statRow
-      .stat(data-driving-duration)
-      .statLabel Minutes Driving
-  #moves.col-md-4
-    .row.statRow
-      .stat(data-steps)
-      .statLabel Steps
-      .stat(data-percent-of-goal)
-      .statLabel Percent of Goal
-      .stat(data-percent-of-goal-no-driving)
-      .statLabel Percent of Goal You Would Be At If You Didn't Drive For Trips Under 2 Miles
-      .stat(data-walking-distance)
-      .statLabel Miles Walked
-      .stat(data-calories)
-      .statLabel Calories
+  section.app-content
+    #driving
+      //- h2.headline In the last 7 days, you've made
+      ul.statlist
+        li
+          var.stat(data-trips-under-two-miles)
+          span.statLabel Trips Under 2 Miles
+        li
+          var.stat(data-driving-duration)
+          span.statLabel Minutes Driving
+    #moves
+      ul.statlist
+        li
+          var.stat(data-steps)
+          span.statLabel Steps
+        li
+          var.stat(data-percent-of-goal)
+          span.statLabel Percent of Goal
+        li
+          var.stat(data-percent-of-goal-no-driving)
+          span.statLabel Percent of Goal You Would Be At If You Didn't Drive For Trips Under 2 Miles
+        li
+          var.stat(data-walking-distance)
+          span.statLabel Miles Walked
+        li
+          var.stat(data-calories)
+          span.statLabel Calories
 
-  #trips
+    #trips
   .loading

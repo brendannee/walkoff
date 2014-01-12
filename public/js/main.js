@@ -14,6 +14,7 @@ function fetchTrips() {
       hideLoading();
       if(data && data.length) {
         processTrips(data);
+        // trackTrips();
       } else {
         showAlert('No trips found', 'warning');
       }
@@ -24,6 +25,12 @@ function fetchTrips() {
     });
 }
 
+// var trackTrips = function() {
+//     var trips = {
+//         trip : "content"
+//     };  
+//     Keen.addEvent("trips", trips);
+// };
 
 function processTrips(data) {
   //Count trips under two miles, but greater than 100 m
@@ -110,65 +117,66 @@ function processGoals(goals) {
   $('[data-percent-of-goal-no-driving]').html(formatPercent(movesPercentOfGoalNoDriving));
 }
 
-function showTrips(trips) {
-  trips.forEach(function(trip) {
-    $('<div>')
-      .addClass('trip')
-      .data('trip_id', trip.id)
-      .data('trip', trip)
-      .append($('<div>')
-        .addClass('times')
-        .append($('<div>')
-          .addClass('endTime')
-          .html(moment(trip.end_time).format('h:mm A<br>M/D/YYYY')))
-        .append($('<div>')
-          .addClass('duration')
-          .text(formatDuration(trip.end_time - trip.start_time)))
-        .append($('<div>')
-          .addClass('startTime')
-          .html(moment(trip.start_time).format('h:mm A<br>M/D/YYYY')))
-        .append($('<div>')
-          .addClass('tripLine')
-          .html('<div></div><div></div>')))
-      .append($('<div>')
-        .addClass('tripSummary')
-        .append($('<div>')
-          .addClass('endLocation')
-          .text(formatLocation(trip.end_location.name)))
-        .append($('<div>')
-          .addClass('tripSummaryBox')
-          .append($('<div>')
-            .addClass('distance')
-            .text(formatNumber(metersToMiles(trip.distance_m))))
-          .append($('<div>')
-            .addClass('mpg')
-            .text(formatNumber(trip.average_mpg)))
-          .append($('<div>')
-            .addClass('fuelCost')
-            .text(formatFuelCost(trip.fuel_cost_usd)))
-          .append($('<div>')
-            .addClass('hardBrakes')
-            .addClass(trip.hard_brakes > 0 ? 'someHardBrakes' : 'noHardBrakes')
-            .text(trip.hard_brakes || ''))
-          .append($('<div>')
-            .addClass('hardAccels')
-            .addClass(trip.hard_accels > 0 ? 'someHardAccels' : 'noHardAccels')
-            .text(trip.hard_accels || ''))
-          .append($('<div>')
-            .addClass('durationOver70')
-            .addClass(formatSpeeding(trip.duration_over_70_s) > 0 ? 'someSpeeding' : 'noSpeeding')
-            .text(trip.duration_over_70_s || '')))
-        .append($('<div>')
-          .addClass('startLocation')
-          .text(formatLocation(trip.start_location.name))))
-        .append($('<div>')
-          .addClass('map')
-          .attr('id', 'map' + trip.id))
-    .appendTo('#trips');
+// function showTrips(trips) {
+//   trips.forEach(function(trip) {
+//     $('<div>')
+//       .addClass('trip')
+//       .data('trip_id', trip.id)
+//       .data('trip', trip)
+//       .append($('<div>')
+//         .addClass('times')
+//         .append($('<div>')
+//           .addClass('endTime')
+//           .html(moment(trip.end_time).format('h:mm A<br>M/D/YYYY')))
+//         .append($('<div>')
+//           .addClass('duration')
+//           .text(formatDuration(trip.end_time - trip.start_time)))
+//         .append($('<div>')
+//           .addClass('startTime')
+//           .html(moment(trip.start_time).format('h:mm A<br>M/D/YYYY')))
+//         .append($('<div>')
+//           .addClass('tripLine')
+//           .html('<div></div><div></div>')))
+      
+//         .append($('<div>')
+//         .addClass('tripSummary')
+//         .append($('<div>')
+//           .addClass('endLocation')
+//           .text(formatLocation(trip.end_location.name)))
+//         .append($('<div>')
+//           .addClass('tripSummaryBox')
+//           .append($('<div>')
+//             .addClass('distance')
+//             .text(formatNumber(metersToMiles(trip.distance_m))))
+//           .append($('<div>')
+//             .addClass('mpg')
+//             .text(formatNumber(trip.average_mpg)))
+//           .append($('<div>')
+//             .addClass('fuelCost')
+//             .text(formatFuelCost(trip.fuel_cost_usd)))
+//           .append($('<div>')
+//             .addClass('hardBrakes')
+//             .addClass(trip.hard_brakes > 0 ? 'someHardBrakes' : 'noHardBrakes')
+//             .text(trip.hard_brakes || ''))
+//           .append($('<div>')
+//             .addClass('hardAccels')
+//             .addClass(trip.hard_accels > 0 ? 'someHardAccels' : 'noHardAccels')
+//             .text(trip.hard_accels || ''))
+//           .append($('<div>')
+//             .addClass('durationOver70')
+//             .addClass(formatSpeeding(trip.duration_over_70_s) > 0 ? 'someSpeeding' : 'noSpeeding')
+//             .text(trip.duration_over_70_s || '')))
+//         .append($('<div>')
+//           .addClass('startLocation')
+//           .text(formatLocation(trip.start_location.name))))
+//         .append($('<div>')
+//           .addClass('map')
+//           .attr('id', 'map' + trip.id))
+//     .appendTo('#trips');
 
-  drawMap(trip);
-  });
-}
+//   drawMap(trip);
+//   });
+// }
 
 
 function drawMap(trip) {

@@ -93,8 +93,14 @@ main{
   max-width: 12em;
   margin: 1.5em auto;
 }
-.auth-button.automatic{
+.auth-button.disabled{
   background: gray;
+  color: rgba(0,0,0,0.2);
+}
+
+.auth-button.signedin{
+  background: rgb(231, 231, 158);
+  color: rgba(0,0,0,0.5);
 }
 
 .app-content{

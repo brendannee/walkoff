@@ -59,6 +59,7 @@ module.exports = function routes(app){
 
 
   app.get('/api/moves/', authenticate, function(req, res) {
+    console.log(req.session.jawbone_access_token)
     request.get({
       uri: 'https://jawbone.com/nudge/api/users/@me/moves',
       qs: { start_time: ((Date.now()/1000) - 7*24*60*60).toFixed(0) },
@@ -72,6 +73,20 @@ module.exports = function routes(app){
       }
     });
     keen.addEvent("upApiCall", {"moves": true});
+  });
+
+  app.get('/api/goals/', authenticate, function(req, res) {
+    request.get({
+      uri: 'https://jawbone.com/nudge/api/users/@me/goals',
+      headers: {Authorization: 'Bearer ' + req.session.jawbone_access_token}
+    }, function(e, r, body) {
+      try {
+        res.json(JSON.parse(body));
+      } catch(e) {
+        console.log("error: " + e);
+        res.json(400, {"message": "Invalid access_token"});
+      }
+    });
   });
 
 
@@ -193,14 +208,17 @@ module.exports = function routes(app){
         var trip = req.body.trip;
         var distance_mi = (trip.distance_m / 1609).toFixed(1);
         var duration = ((trip.end_time - trip.start_time) / (60*60*1000)).toFixed();
-        var title = 'Trip to ' + trip.start_location.nickname;
-        var note = 'Drive from ' + trip.start_location.nickname + ' to ' + trip.end_location.nickname + '. It took ' + duration + ' minutes to drive ' + distance_mi + ' miles and cost $' + trip.fuel_cost_usd.toFixed(2) + ' in fuel.';
+        var title = 'Trip to ' + trip.start_location.name;
+        var note = 'Drive from ' + trip.start_location.name + ' to ' + trip.end_location.name + '. It took ' + duration + ' minutes to drive ' + distance_mi + ' miles and cost $' + trip.fuel_cost_usd.toFixed(2) + ' in fuel.';
+        var path = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
+        var markers = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
         request.post({
           uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
           form: {
             title: title,
             verb: 'drove',
             note: note,
+            image_url: 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + markers + '&path=' +  path + '&size=600x600&sensor=false',
             place_lat: trip.end_location.lat,
             place_lon: trip.end_location.lon,
             time_created: Math.round(trip.end_time/1000)
@@ -214,6 +232,8 @@ module.exports = function routes(app){
             res.json(400, {"message": "Invalid access_token"});
           }
         });
+      } else {
+        res.json(400, {"message": "No Matching User"});
       }
     });
 

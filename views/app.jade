@@ -3,32 +3,9 @@ extends layout
 block content
   section.app-content
     #driving
-      //- h2.headline In the last 7 days, you've made
-      ul.statlist
-        li
-          var.stat(data-trips-under-two-miles)
-          span.statLabel Trips Under 2 Miles
-        li
-          var.stat(data-driving-duration)
-          span.statLabel Minutes Driving
-    #moves
-      ul.statlist
-        li
-          var.stat(data-steps)
-          span.statLabel Steps
-        li
-          var.stat(data-percent-of-goal)
-          span.statLabel Percent of Goal
-        li
-          var.stat(data-percent-of-goal-no-driving)
-          span.statLabel Percent of Goal You Would Be At If You Didn't Drive For Trips Under 2 Miles
-        li
-          var.stat(data-walking-distance)
-          span.statLabel Miles Walked
-        li
-          var.stat(data-calories)
-          span.statLabel Calories
+      h2.headline In the last 7 days, you've made <span data-trips-under-two-miles>&nbsp;</span> trips under two miles
 
+<<<<<<< HEAD
     ul#trips
       li.trip
         h3.triptitle your trip on Tuesday Morning
@@ -42,5 +19,21 @@ block content
             em if you walked
             var 12%
             span of your goal
+=======
+      h2.headline You've walked <span ddata-percent-of-goal>&nbsp;</span> of your goal during that time.
+      .statbox
+        span.or OR
+        .stat.length
+          var(data-steps) &nbsp;
+          span steps
+        .stat.equivalence
+          var(data-percent-of-goal) &nbsp;
+          span of your goal
+
+      h2.headline You would be at <span data-percent-of-goal-no-driving>&nbsp;</span> if you had walked all of the trips you drove which were less than two miles
+
+      h2.headline Here are the trips you could have walked
+      ul#trips
+>>>>>>> ff36b9ddec9cb7ffb5ee09fd974c0f2b8b93e6bf
 
   .loading

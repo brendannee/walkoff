@@ -27,6 +27,10 @@ header[role="banner"]{
   display: none;
 }
 
+#content h2:first-child {
+  margin-top: 0;
+}
+
 .titlebar{
   font-weight: normal;
   letter-spacing: .175em;
@@ -92,6 +96,11 @@ main{
   overflow: auto;
   min-height: 500px;
 }
+.app-content h2 span {
+  font-size: 30px;
+  font-weight: bold;
+}
+
 .headline{
   font-weight: 400;
 }
@@ -193,7 +202,7 @@ main{
   border: 1px solid rgba(0,0,0,.2);
   margin: 1em 0;
   color: rgba(0,0,0,.5);
-  padding: 10px 15px;
+  padding: 12px 15px;
   height: 50px;
   font-weight: bold;
   font-size: 16px;
@@ -202,7 +211,7 @@ main{
 #loading-bar {
   width: 10%;
   height: 1px;
-  background: red;
+  background: rgba(0, 245, 255, 1);
   position: absolute;
   top:0;
   -webkit-transition: width 1s ease-in-out;

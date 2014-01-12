@@ -137,7 +137,7 @@ function showTrips(trips) {
       .data('trip', trip)
       .append($('<p>')
         .addClass('triptitle')
-        .html('Trip at ' + moment(trip.start_time).format('h:mm A on M/D/YYYY') + ' to ' + trip.end_location.name))
+        .html('Trip at ' + moment(trip.start_time).format('h:mm A on M/D/YYYY') /*+ ' to ' + trip.end_location.name*/))
       .append($('<div>')
         .addClass('statbox')
         .append($('<span>')
@@ -190,7 +190,7 @@ function showLoading(text, phase) {
 
 
 function hideLoading() {
-  $('.loading').fadeOut();
+  $('.loading').hide();
   $('#loading-bar').fadeOut();
 
   $('#content').show();

@@ -13,13 +13,11 @@ function fetchMoves() {
   showLoading('Loading your moves', 'moves');
   $.getJSON('/api/moves/', {})
     .done(function(data) {
-      console.log(data)
       if(data && data.data && data.data.items && data.data.items.length) {
         processMoves(data.data.items);
       } else {
         console.log('No moves found');
       }
-      fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
       console.log('Unable to fetch moves (' + jqhxr.status + ' ' + error + ')');
@@ -56,7 +54,6 @@ function fetchGoals() {
       } else {
         console.log('No goals found');
       }
-      fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
       console.log('Unable to fetch goals (' + jqhxr.status + ' ' + error + ')');
@@ -79,13 +76,10 @@ function fetchTrips() {
   showLoading('Loading your trips', 'trips')
   $.getJSON('/api/trips/', {page: 1, per_page: 20})
     .done(function(data) {
-      if(data && data.length) {
+      if(data) {
         processTrips(data);
         // trackTrips();
-      } else {
-        console.log('No trips found');
       }
-      fetching = false;
     })
     .fail(function(jqhxr, textStatus, error) {
       console.log('Unable to fetch trips (' + jqhxr.status + ' ' + error + ')');
@@ -127,6 +121,9 @@ function processTrips(data) {
 
 
 function showTrips(trips) {
+  if(!trips.length) {
+    $('#trips h2.headline').text('There are no trips in the last 7 days under two miles.');
+  }
   var stepsPerMile = totalMoves.steps / metersToMiles(totalMoves.distance);
   trips.forEach(function(trip) {
     console.log(trip)

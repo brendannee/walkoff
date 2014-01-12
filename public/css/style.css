@@ -43,28 +43,35 @@ main{
 }
 
 .homepage {
-  width: 960px;
+  /*width: 960px;*/
   margin: 0 auto;
-  background: url(/images/homepage_bg.jpg) 0 0 no-repeat;
+  background: url(/images/homepage_bg.jpg) center 0 no-repeat;
+  background-size: 200%;
   height: 651px;
 }
 
 .homepage h1 {
   margin: 0;
-  padding-top: 50px;
+  padding-top: .5em;
   text-transform: uppercase;
-  font-size: 70px;
+  font-size: 2em;
   color: #FFF;
+  line-height: 1;
   text-align: center;
 }
 
 .homepage h2 {
   text-transform: uppercase;
-  width: 600px;
   margin: 0 auto;
+  font-size: 1em;
+  font-weight: 400;
   text-align: center;
-  padding-top: 30px;
+  padding-top: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
   color: #FFF;
+  letter-spacing: 1px;
+  line-height: 1.4;
 }
 
 .auth-panel{
@@ -76,14 +83,14 @@ main{
   display: block;
   color: rgb(248,248,248);
   background: rgb(57,204,204);
-  font-weight: 300;
+  font-weight: 400;
   font-size: 1.25em;
   box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,.1), 0px 1px 0px 0px rgba(0,0,0,.1);
   border-radius: .5em;
   text-decoration: none;
   padding: .75em;
   max-width: 12em;
-  margin: 2.5em auto;
+  margin: 1.5em auto;
 }
 
 

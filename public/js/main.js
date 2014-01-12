@@ -14,6 +14,7 @@ function fetchTrips() {
       hideLoading();
       if(data && data.length) {
         processTrips(data);
+        // trackTrips();
       } else {
         showAlert('No trips found', 'warning');
       }
@@ -24,6 +25,12 @@ function fetchTrips() {
     });
 }
 
+// var trackTrips = function() {
+//     var trips = {
+//         trip : "content"
+//     };  
+//     Keen.addEvent("trips", trips);
+// };
 
 function processTrips(data) {
   //Count trips under two miles, but greater than 100 m

@@ -10,6 +10,10 @@ try {
 
 module.exports = function(app){
 
+  var db = require('monk')(process.env.MONGOLAB_URI || 'mongodb://127.0.0.1:27017/walkoff');
+
+  app.set('db', db);
+
   var automaticAPI = {
       automaticClientId: process.env.AUTOMATIC_CLIENT_ID || keys.automaticClientId
     , automaticClientSecret: process.env.AUTOMATIC_CLIENT_SECRET || keys.automaticClientSecret

@@ -18,7 +18,7 @@ module.exports = function routes(app){
 
   app.get('/', function(req, res) {
     // req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
-    // req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlhoY_mRHcsBU4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
+    // req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlqyxdgjjWTWY4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
     if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {
       res.render('app', {loggedIn: true});
     } else {
@@ -59,6 +59,7 @@ module.exports = function routes(app){
 
 
   app.get('/api/moves/', authenticate, function(req, res) {
+    console.log(req.session.jawbone_access_token)
     request.get({
       uri: 'https://jawbone.com/nudge/api/users/@me/moves',
       qs: { start_time: ((Date.now()/1000) - 7*24*60*60).toFixed(0) },

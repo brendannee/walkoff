@@ -45,7 +45,7 @@ main{
 .homepage {
   /*width: 960px;*/
   margin: 0 auto;
-  background: url(/images/homepage_bg.jpg) center 0 no-repeat;
+  background: url(/images/homepage_bg.png) center 0 no-repeat;
   background-size: 200%;
   height: 651px;
 }

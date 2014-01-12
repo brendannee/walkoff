@@ -4,6 +4,11 @@ var request = require('request'),
     moment = require('moment');
     keen = require("keen.io");
 
+  var keen = keen.configure({
+  projectId: "52d0b36a05cd66792b00000b",
+  writeKey: "531d7faa9ada8e0a0f2c345e50f682645b5f055d89a42c234bfacd0c116e3ac1c9fb499df00a2954a839d6c60052e9627a86764c811f1875a09cbc1217adf7e2dc575f6cc06050c9547c750bd51e89e0fe5af1d2ce659369cc7e97b460039aa3cc714f056c1c385b85c6428e827dd82f"
+});
+
 module.exports = function routes(app){
 
   var automaticAPI = app.get('automaticAPI');
@@ -18,7 +23,6 @@ module.exports = function routes(app){
       res.render('index', {automatic_access_token: (req.session.automatic_access_token), jawbone_access_token: (req.session.jawbone_access_token)});
     }
   });
-
 
   app.get('/authorize-automatic/', function(req, res) {
       res.redirect(automaticAPI.automaticAuthorizeUrl + '?client_id=' + automaticAPI.automaticClientId + '&response_type=code&scope=' + automaticAPI.automaticScopes)
@@ -35,7 +39,6 @@ module.exports = function routes(app){
     res.redirect('/');
   });
 
-
   app.get('/api/trips/', authenticate, function(req, res) {
     request.get({
       uri: 'https://api.automatic.com/v1/trips',
@@ -49,6 +52,7 @@ module.exports = function routes(app){
         res.json(400, {"message": "Invalid access_token"});
       }
     });
+    keen.addEvent("automaticApiCall", {"trips": true});
   });
 
 
@@ -65,6 +69,7 @@ module.exports = function routes(app){
         res.json(400, {"message": "Invalid access_token"});
       }
     });
+    keen.addEvent("upApiCall", {"moves": true});
   });
 
 

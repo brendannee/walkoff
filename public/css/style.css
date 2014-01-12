@@ -83,7 +83,9 @@ main{
   max-width: 12em;
   margin: 1.5em auto;
 }
-
+.auth-button.automatic{
+  background: gray;
+}
 
 .app-content{
   max-width: 320px;
@@ -179,11 +181,12 @@ main{
 }
 .length{
   float: left;
-  background: rgb(255,220,0);
-  color: rgb(40,40,40);
+  background: gray;
+  /*color: rgb(40,40,40);*/
+  color: rgb(248,248,248);
 }
 .equivalence{
   float: right;
-  background: rgb(61,153,112);
+  background: rgb(237,75,13);
   color: rgb(248,248,248);
 }

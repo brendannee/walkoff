@@ -18,9 +18,7 @@ module.exports = function routes(app){
 
   app.get('/', function(req, res) {
     // req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
-    // req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlmKBxi435Lwz4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
-    req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
-    req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlmkjMe-1ZFvM4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
+    // req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlmkjMe-1ZFvM4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
     if(req.session.jawbone_redirect_url) {
       res.redirect(req.session.jawbone_redirect_url);
     } else if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {

@@ -1,7 +1,8 @@
 var express = require('express')
   , MemoryStore = express.session.MemoryStore
   , store = new MemoryStore()
-  , keen = require('keen.io');
+  , keen = require('keen.io')
+  , monk = require('monk');
 
 try {
   var keys = require('./keys');
@@ -10,7 +11,7 @@ try {
 
 module.exports = function(app){
 
-  var db = require('monk')(process.env.MONGOLAB_URI || 'mongodb://127.0.0.1:27017/walkoff');
+  var db = monk(process.env.MONGOLAB_URI || 'mongodb://127.0.0.1:27017/walkoff');
 
   app.set('db', db);
 
@@ -48,6 +49,7 @@ module.exports = function(app){
     , readKey: process.env.KEEN_READ_KEY || keys.keenReadKey
     , masterKey: process.env.KEEN_MASTER_KEY || keys.keenMasterKey
   });
+  app.set('keen', keen);
 
   // Dev
   app.configure('development', function(){
@@ -57,6 +59,8 @@ module.exports = function(app){
       .use(express.errorHandler({dumpExceptions: true, showStack: true}))
       .enable('dev')
       .set('domain', 'localhost');
+
+    this.locals.pretty = true;
   });
 
   // Prod

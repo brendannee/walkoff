@@ -149,17 +149,11 @@ module.exports = function routes(app){
             var response = JSON.parse(body);
             var jawbone_id = response.data.xid;
             req.session.jawbone_id = jawbone_id;
-            users.findOne({jawbone_id: jawbone_id}, function (e, doc) {
-              if(!doc) {
-                users.insert({jawbone_access_token: req.session.jawbone_access_token, jawbone_id: jawbone_id}, function(e, doc) {
-                  res.redirect('/');
-                });
-              } else {
-                if(doc.automatic_access_token) {
-                  req.session.automatic_access_token = doc.automatic_access_token;
-                }
-                res.redirect('/');
+            users.findAndModify({jawbone_id: jawbone_id}, {$set: {jawbone_access_token: req.session.jawbone_access_token, jawbone_id: jawbone_id}}, {upsert: true}, function (e, doc) {
+              if(doc.automatic_access_token) {
+                req.session.automatic_access_token = doc.automatic_access_token;
               }
+              res.redirect('/');
             });
           } catch(e) {
             console.log("error: " + e);
@@ -201,44 +195,57 @@ module.exports = function routes(app){
 
 
   app.post('/webhook/', function(req, res) {
-    users.findOne({automatic_id: req.body.user.id}, function (e, doc) {
-      if(doc) {
-        var trip = req.body.trip;
-        var distance_mi = (trip.distance_m / 1609).toFixed(1);
-        var duration = ((trip.end_time - trip.start_time) / (60*60*1000)).toFixed();
-        var stepsPerMile = 2100;
-        var missedSteps = distance_mi * 2100;
-        var dailyGoal = 10000;
-        var title = trip.start_location.name + ' instead of walking ' + missedSteps.toFixed(0) + ' steps';
-        var percentOfDailyGoal = ((missedSteps / dailyGoal) * 100).toFixed(0) + '%';
-        var note = 'Your drive from ' + trip.start_location.name + ' to ' + trip.end_location.name + '. It took ' + duration + ' minutes to drive ' + distance_mi + ' miles and cost $' + trip.fuel_cost_usd.toFixed(2) + ' in fuel.  Had you walked for this trip, it would have been ' + missedSteps.toFixed(0) + ' additional steps accounting for ' + percentOfDailyGoal + ' of your daily goal.';
-        var path = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
-        var markers = trip.start_location.lat + ',' + trip.start_location.lon + '|' + trip.end_location.lat + ',' + trip.end_location.lon;
-        request.post({
-          uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
-          form: {
-            title: title,
-            verb: 'drove',
-            note: note,
-            image_url: 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + markers + '&path=' +  path + '&size=600x600&sensor=false',
-            place_lat: trip.end_location.lat,
-            place_lon: trip.end_location.lon,
-            time_created: Math.round(trip.end_time/1000)
-          },
-          headers: {Authorization: 'Bearer ' + doc.jawbone_access_token}
-        }, function(e, r, body) {
-          try {
-            res.json(JSON.parse(body));
-          } catch(e) {
-            console.log("error: " + e);
-            res.json(400, {"message": "Invalid access_token"});
-          }
-        });
-      } else {
-        res.json(400, {"message": "No Matching User"});
-      }
-    });
-
+    console.log('>>>>>>> Incoming Webhook: ' + JSON.stringify(req.body));
+    if(req.body.type == 'trip:finished') {
+      users.findOne({automatic_id: req.body.user.id}, function (e, doc) {
+        if(doc) {
+          var trip = req.body.trip || {};
+          var distance_mi = (trip.distance_m || 0) / 1609;
+          var end_time = trip.end_time || (new Date).getTime();
+          var start_time = trip.start_time || (new Date).getTime();
+          var duration = ((end_time - start_time) / (60*60*1000));
+          var stepsPerMile = 2100;
+          var missedSteps = (distance_mi * 2100) || 0;
+          var dailyGoal = 10000;
+          var title = distance_mi.toFixed(1) + ' mi instead of walking ' + missedSteps.toFixed(0) + ' steps';
+          var percentOfDailyGoal = ((missedSteps / dailyGoal) * 100).toFixed(0) + '%';
+          var fuel_cost = trip.fuel_cost_usd || 0;
+          var start_location = (trip.start_location) ? trip.start_location.name : '';
+          var end_location = (trip.end_location) ? trip.end_location.name : '';
+          var start_lat = (trip.start_location) ? trip.start_location.lat : 0;
+          var start_lon = (trip.start_location) ? trip.start_location.lon : 0;
+          var end_lat = (trip.end_location) ? trip.end_location.lat : 0;
+          var end_lon = (trip.end_location) ? trip.end_location.lon : 0;
+          var note = 'Your drive from ' + start_location + ' to ' + end_location + '. It took ' + duration.toFixed(0) + ' minutes to drive ' + distance_mi.toFixed(1) + ' miles and cost $' + fuel_cost.toFixed(2) + ' in fuel.  Had you walked for this trip, it would have been ' + missedSteps.toFixed(0) + ' additional steps accounting for ' + percentOfDailyGoal + ' of your daily goal.';
+          var path = start_lat + ',' + start_lon + '|' + end_lat + ',' + end_lon;
+          var markers = start_lat + ',' + start_lon + '|' + end_lat + ',' + end_lon;
+          request.post({
+            uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
+            form: {
+              title: title,
+              verb: 'drove',
+              note: note,
+              image_url: 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + markers + '&path=' +  path + '&size=600x600&sensor=false',
+              place_lat: end_lat,
+              place_lon: end_lon,
+              time_created: Math.round(start_time/1000)
+            },
+            headers: {Authorization: 'Bearer ' + doc.jawbone_access_token}
+          }, function(e, r, body) {
+            try {
+              res.json(JSON.parse(body));
+            } catch(e) {
+              console.log("error: " + e);
+              res.json(400, {"message": "Invalid access_token"});
+            }
+          });
+        } else {
+          res.json(400, {"message": "No Matching User"});
+        }
+      });
+    } else {
+      res.json({"message": "Thanks"});
+    }
   });
 
   app.get('/authorize/', function(req, res) {

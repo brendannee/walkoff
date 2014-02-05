@@ -86,8 +86,6 @@ function processStats() {
     }
   }, {distance: 0, calories: 0, active_time: 0, steps: 0});
 
-
-
   stats.weeklyGoal = goals.move_steps * 7;
   stats.stepsPerMile = Math.round(stats.totalMoves.steps / metersToMiles(stats.totalMoves.distance));
 

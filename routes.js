@@ -212,20 +212,17 @@ module.exports = function routes(app){
           var fuel_cost = trip.fuel_cost_usd || 0;
           var start_location = (trip.start_location) ? trip.start_location.name : '';
           var end_location = (trip.end_location) ? trip.end_location.name : '';
-          var start_lat = (trip.start_location) ? trip.start_location.lat : 0;
-          var start_lon = (trip.start_location) ? trip.start_location.lon : 0;
           var end_lat = (trip.end_location) ? trip.end_location.lat : 0;
           var end_lon = (trip.end_location) ? trip.end_location.lon : 0;
           var note = 'Your drive from ' + start_location + ' to ' + end_location + '. It took ' + duration.toFixed(0) + ' minutes to drive ' + distance_mi.toFixed(1) + ' miles and cost $' + fuel_cost.toFixed(2) + ' in fuel.  Had you walked for this trip, it would have been ' + missedSteps.toFixed(0) + ' additional steps accounting for ' + percentOfDailyGoal + ' of your daily goal.';
-          var path = start_lat + ',' + start_lon + '|' + end_lat + ',' + end_lon;
-          var markers = start_lat + ',' + start_lon + '|' + end_lat + ',' + end_lon;
+
           request.post({
             uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
             form: {
               title: title,
               verb: 'drove',
               note: note,
-              image_url: 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + markers + '&path=' +  path + '&size=600x600&sensor=false',
+              image_url: getStaticMap(trip),
               place_lat: end_lat,
               place_lon: end_lon,
               time_created: Math.round(start_time/1000)
@@ -247,6 +244,19 @@ module.exports = function routes(app){
       res.json({"message": "Thanks"});
     }
   });
+
+
+  function getStaticMap(trip) {
+    var start_lat = (trip.start_location) ? trip.start_location.lat : 0;
+    var start_lon = (trip.start_location) ? trip.start_location.lon : 0;
+    var end_lat = (trip.end_location) ? trip.end_location.lat : 0;
+    var end_lon = (trip.end_location) ? trip.end_location.lon : 0;
+    var path = 'color:0x08b1d5dd|weight:9|enc:' + trip.path;
+    var start_marker = 'label:S|' + start_lat + ',' + start_lon;
+    var end_marker = 'label:E|' + end_lat + ',' + end_lon;
+    return 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + start_marker + '&markers=' + end_marker + '&path=' +  path + '&size=600x600&sensor=false';
+  }
+
 
   app.get('/authorize/', function(req, res) {
     req.session.jawbone_redirect_url = req.query.redirect_url;

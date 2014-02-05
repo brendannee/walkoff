@@ -203,18 +203,18 @@ module.exports = function routes(app){
           var distance_mi = (trip.distance_m || 0) / 1609;
           var end_time = trip.end_time || (new Date).getTime();
           var start_time = trip.start_time || (new Date).getTime();
-          var duration = ((end_time - start_time) / (60*60*1000));
+          var minutes = ((end_time - start_time) / (60*1000));
           var stepsPerMile = 2100;
           var missedSteps = (distance_mi * 2100) || 0;
           var dailyGoal = 10000;
-          var title = distance_mi.toFixed(1) + ' mi instead of walking ' + missedSteps.toFixed(0) + ' steps';
+          var title = distance_mi.toFixed(1) + ' mi instead of walking ' + numberWithCommas(missedSteps.toFixed(0)) + ' steps';
           var percentOfDailyGoal = ((missedSteps / dailyGoal) * 100).toFixed(0) + '%';
           var fuel_cost = trip.fuel_cost_usd || 0;
           var start_location = (trip.start_location) ? trip.start_location.name : '';
           var end_location = (trip.end_location) ? trip.end_location.name : '';
           var end_lat = (trip.end_location) ? trip.end_location.lat : 0;
           var end_lon = (trip.end_location) ? trip.end_location.lon : 0;
-          var note = 'Your drive from ' + start_location + ' to ' + end_location + '. It took ' + duration.toFixed(0) + ' minutes to drive ' + distance_mi.toFixed(1) + ' miles and cost $' + fuel_cost.toFixed(2) + ' in fuel.  Had you walked for this trip, it would have been ' + missedSteps.toFixed(0) + ' additional steps accounting for ' + percentOfDailyGoal + ' of your daily goal.';
+          var note = 'Your drive from ' + start_location + ' to ' + end_location + '. It took ' + numberWithCommas(minutes.toFixed(0)) + ' minutes to drive ' + distance_mi.toFixed(1) + ' miles and cost $' + fuel_cost.toFixed(2) + ' in fuel.  Had you walked for this trip, it would have been ' + missedSteps.toFixed(0) + ' additional steps accounting for ' + percentOfDailyGoal + ' of your daily goal.';
 
           request.post({
             uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',
@@ -261,6 +261,11 @@ module.exports = function routes(app){
   app.get('/authorize/', function(req, res) {
     req.session.jawbone_redirect_url = req.query.redirect_url;
     res.redirect('/authorize-jawbone/');
-  })
+  });
+
+
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
 
 }

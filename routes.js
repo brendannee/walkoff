@@ -214,7 +214,7 @@ module.exports = function routes(app){
           var end_location = (trip.end_location) ? trip.end_location.name : '';
           var end_lat = (trip.end_location) ? trip.end_location.lat : 0;
           var end_lon = (trip.end_location) ? trip.end_location.lon : 0;
-          var note = 'Your drive from ' + start_location + ' to ' + end_location + '. It took ' + numberWithCommas(minutes.toFixed(0)) + ' minutes to drive ' + distance_mi.toFixed(1) + ' miles and cost $' + fuel_cost.toFixed(2) + ' in fuel.  Had you walked for this trip, it would have been ' + missedSteps.toFixed(0) + ' additional steps accounting for ' + percentOfDailyGoal + ' of your daily goal.';
+          var note = 'You drove ' + distance_mi.toFixed(1) + ' miles from ' + start_location + ' to ' + end_location + '. It took ' + minutes.toFixed(0) + ' minutes and cost $' + fuel_cost.toFixed(2) + ' in fuel.  \n\nHad you walked this trip, you\'d be ' + percentOfDailyGoal + ' (' + numberWithCommas(missedSteps.toFixed(0)) + ' steps) closer to your daily goal.';
 
           request.post({
             uri: 'https://jawbone.com/nudge/api/users/@me/generic_events',

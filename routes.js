@@ -11,10 +11,12 @@ module.exports = function routes(app){
     , keen = app.get('db').get('keen')
 
   app.get('/', function(req, res) {
-    // req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
-    // req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlmkjMe-1ZFvM4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
+    //req.session.automatic_access_token = 'eec57d208a73151e13af127d656337f78b099141';
+    //req.session.jawbone_access_token = 'W3AjaI7_iOUXoGbe1HgAYvjzF5uVFZ0zYqU_fcvtdx5hlsAkEOtrlmkjMe-1ZFvM4-yaOxh-sKlMWLqfgbkSwFECdgRlo_GULMgGZS0EumxrKbZFiOmnmAPChBPDZ5JP';
+    console.log(req);
     if(req.session.jawbone_redirect_url) {
       res.redirect(req.session.jawbone_redirect_url);
+      console.log(req.session, req.body);
     } else if(req.session && req.session.automatic_access_token && req.session.jawbone_access_token) {
       res.render('app', {loggedIn: true});
     } else {
@@ -23,14 +25,15 @@ module.exports = function routes(app){
   });
 
   app.get('/authorize-automatic/', function(req, res) {
+    // keen.addEvent("beginAuthAutomatic", {"key": value})
       res.redirect(automaticAPI.automaticAuthorizeUrl + '?client_id=' + automaticAPI.automaticClientId + '&response_type=code&scope=' + automaticAPI.automaticScopes)
   });
 
 
   app.get('/authorize-jawbone/', function(req, res) {
+    // keen.addEvent("beginAuthJawbone", {"key": value})
       res.redirect(jawboneAPI.jawboneAuthorizeUrl + '?client_id=' + jawboneAPI.jawboneClientId + '&redirect_uri=' + encodeURIComponent('https://walkoff.herokuapp.com/redirect-jawbone/') + '&response_type=code&scope=basic_read move_read generic_event_write')
   });
-
 
   app.get('/logout/', function(req, res) {
     req.session.destroy();
@@ -112,6 +115,7 @@ module.exports = function routes(app){
           {jawbone_access_token: req.session.jawbone_access_token},
           {$set: {automatic_access_token: access_token.access_token, automatic_id: automatic_id}},
           function(e, doc) {
+            // keen.addEvent("userCompleteAuthAutomatic", {"key": value})
             res.redirect('/');
           }
         );
@@ -153,6 +157,7 @@ module.exports = function routes(app){
               if(doc.automatic_access_token) {
                 req.session.automatic_access_token = doc.automatic_access_token;
               }
+              // keen.addEvent("userCompleteAuthJawbone", {"key": value})
               res.redirect('/');
             });
           } catch(e) {

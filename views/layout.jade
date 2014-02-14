@@ -8,6 +8,25 @@ html(lang="en")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     //- link(rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" media="screen")
 
+    //- jade is confusing as hell. here is the skeleton of page view analytics in Keen, should be able to easly set up from here.
+    //- script(src="//dc8na2hxrj29i.cloudfront.net/code/keen-2.1.2-min.js")
+    //- script
+    //-   Keen.configure({
+    //-     projectId: "52d0b36a05cd66792b00000b",
+    //-     writeKey: "531d7faa9ada8e0a0f2c345e50f682645b5f055d89a42c234bfacd0c116e3ac1c9fb499df00a2954a839d6c60052e9627a86764c811f1875a09cbc1217adf7e2dc575f6cc06050c9547c750bd51e89e0fe5af1d2ce659369cc7e97b460039aa3cc714f056c1c385b85c6428e827dd82f"
+    //-   })
+    //-   var pageview = {
+    //-     page: window.location.href
+    //-     referrer: document.referrer
+    //-     agent: window.navigator.userAgent
+      }
+    //-   if loggedIn
+        //- put user.id here
+        //- pageview.user = ''
+
+    //- Keen.addEvent('pageview', pageview)
+
+
     script(src="//use.typekit.net/hkz1ntk.js")
     script
       - try{Typekit.load();}catch(e){};

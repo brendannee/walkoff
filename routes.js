@@ -196,7 +196,8 @@ module.exports = function routes(app){
 
   app.post('/webhook/', function(req, res) {
     console.log('>>>>>>> Incoming Webhook: ' + JSON.stringify(req.body));
-    if(req.body.type == 'trip:finished') {
+    var max_distance_m = 2 * 1609;
+    if(req.body.type == 'trip:finished' && req.body.trip.distance_m <= max_distance_m) {
       users.findOne({automatic_id: req.body.user.id}, function (e, doc) {
         if(doc) {
           var trip = req.body.trip || {};

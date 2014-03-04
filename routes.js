@@ -255,7 +255,8 @@ module.exports = function routes(app){
     var path = 'color:0x08b1d5dd|weight:9|enc:' + trip.path;
     var start_marker = 'label:S|' + start_lat + ',' + start_lon;
     var end_marker = 'label:E|' + end_lat + ',' + end_lon;
-    return 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + start_marker + '&markers=' + end_marker + '&path=' +  path + '&size=600x600&sensor=false';
+    var size = '600x300';
+    return 'http://maps.googleapis.com/maps/api/staticmap?scale=2&markers=' + start_marker + '&markers=' + end_marker + '&path=' +  path + '&size=' + size + '&sensor=false';
   }
 
 

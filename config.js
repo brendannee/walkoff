@@ -20,7 +20,7 @@ module.exports = function(app){
     , automaticClientSecret: process.env.AUTOMATIC_CLIENT_SECRET || keys.automaticClientSecret
     , automaticAuthorizeUrl: process.env.AUTOMATIC_AUTHORIZE_URL || keys.automaticAuthorizeUrl
     , automaticAuthTokenUrl: process.env.AUTOMATIC_AUTH_TOKEN_URL || keys.automaticAuthTokenUrl
-    , automaticScopes: 'scope:trip scope:vehicle:profile scope:vehicle:events'
+    , automaticScopes: 'scope:trip scope:vehicle:profile scope:location'
   }
   app.set('automaticAPI', automaticAPI);
 
